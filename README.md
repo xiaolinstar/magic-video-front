@@ -21,6 +21,7 @@ npm run build
 
 ## 容器化部署
 使用Docker容器化相关程序。Node作为基础镜像，使用Nginx对构建生成的项目dist反向代理
+多平台构建
 
 
 ## Customize configuration

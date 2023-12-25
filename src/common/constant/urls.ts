@@ -6,7 +6,8 @@ const API_PREFIX: string = import.meta.env.VITE_API_URL
  */
 export const API_URL = {
     // 从后端获取视频资源
-    URL_RESOURCE: `${ORIGIN}/${API_PREFIX}/v1/core/resource/all`
+    // 使用nginx解决跨域问题
+    URL_RESOURCE: `/api/core/resource/all`
 }
 
 

@@ -42,7 +42,7 @@ const updateVideo = async() => {
 }
 
 watch(() => [form.id], () => {
-  console.log('[video change]', form.id);
+  console.log('[change id]', form.id);
   updateVideo()
 })
 
