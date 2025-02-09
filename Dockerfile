@@ -1,4 +1,4 @@
-FROM node:22-alpine3.20 as build-stage
+FROM node:22-alpine3.20 AS build-stage
 # 作者信息
 LABEL authors="xing.xiaolin@foxmail.com"
 
@@ -14,7 +14,7 @@ RUN npm install
 # 构建生产环境下到Vue项目
 RUN npm run build
 
-FROM nginx:stable-alpine
+FROM nginx:alpine3.20-perl
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 

@@ -1,0 +1,23 @@
+# 创建网桥
+networks:
+  magic-front-network:
+    external: false
+
+services:
+  magic-web-front:
+    image: xxl1997/magic-web-front:0.0.1-SNAPSHOT
+    container_name: magic-local-web-front
+    hostname: magic-local-web-front
+    restart: no
+    networks:
+      - magic-front-network
+    environment:
+      TZ: Asia/Shanghai
+    ports:
+      - "80:8080"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
