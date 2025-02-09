@@ -2,41 +2,77 @@
 
 ## 待办Todos
 
-* [ ]  使用云服务器部署或者Docker部署，支撑CI/CD
-* [ ]  Dockerfile环境区分，容器部署时隐蔽不可见服务
-* [ ]  文档完善
-* [x]  使用docker-compose启动容器
+* [ ]  使用云服务器部署或者Docker部署，支撑 CI/CD
+* [X]  文档完善
+* [X]  使用docker-compose启动容器
 * [ ]  页面弹性化，自适应屏幕变化
-
 
 ## 更新日志
 
+2025-02-17 文档完善，开发环境和生产环境启动项目
 
-## 快速启动
+## 开始
 
-### 安装依赖
+### 开发环境
+
+项目克隆
+
+```shell
+git clone https://github.com/xiaolinstar/magic-video-front.git
+```
+
+进入项目
+
+```shell
+cd magic-video-front
+```
+
+安装依赖
 
 ```sh
 npm install
 ```
 
-### 开发环境热启动
+开发环境热启动
 
 ```sh
 npm run dev
 ```
 
-### 生产环境构建
+### 生产环境容器化部署
+
+build 构建分发包 dist，然后使用 Nginx 静态资源代理
+
+在项目目录下，构建
 
 ```sh
 npm run build
 ```
 
-## 容器化部署
+基于项目根目录下的 Dockerfile 构建镜像
 
-使用Docker容器化相关程序。Node作为基础镜像，使用Nginx对构建生成的项目dist反向代理
-多平台构建
+```shell
+docker build -t xxl1997/magic-web-front:0.0.1-SNAPSHOT .
+```
 
-## 环境变量
+Windows 上的 Docker-Desktop 可能不支持上述命令，执行
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+```shell
+# buildx 构建
+docker buildx build -t xxl1997/magic-web-front:0.0.1-SNAPSHOT .
+```
+
+基于 Docker-Compose 启动项目，项目根目录下执行
+
+```shell
+docker compose up -d
+```
+
+项目卸载
+
+```shell
+docker compose down
+```
+
+## 参考
+
