@@ -10,10 +10,13 @@
 ## 更新日志
 
 2025-02-17 文档完善，开发环境和生产环境启动项目
+2025-02-19 创建 dev 分支，在开发环境启动项目 `npm run dev`
 
 ## 开始
 
 ### 开发环境
+
+> 请先启动 magic-video-backend 后端服务，提供接口支持
 
 项目克隆
 
@@ -25,6 +28,12 @@ git clone https://github.com/xiaolinstar/magic-video-front.git
 
 ```shell
 cd magic-video-front
+```
+
+切换到 `dev` 分支
+
+```shell
+git checkout dev
 ```
 
 安装依赖
