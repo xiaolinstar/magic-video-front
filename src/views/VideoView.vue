@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { onMounted, reactive, watch, ref } from 'vue';
-import Hls from 'hls.js';
-import {listVideoResources} from '@/apis/videos'
+import { onMounted, reactive, watch, ref, onUnmounted } from 'vue';
+import dashjs from 'dashjs';
+import { listVideoResources } from '@/apis/videos'
 import { useRoute } from 'vue-router';
 
 interface IVideo {
@@ -14,8 +14,10 @@ interface IVideo {
   avatar: string; // 资源封面图
 }
 
-const HlsVideoRef = ref()
+const dashVideoRef = ref()
 const route = useRoute()
+let player: dashjs.MediaPlayerClass | null = null;
+
 /**
  * 响应式视频表单
  */
@@ -25,20 +27,25 @@ const form = reactive({
 })
 
 const updateVideo = async() => {
-
   let currVideo: IVideo = form.videos[form.id];
-
-  if (Hls.isSupported()) {
-    const hls = new Hls();
-    hls.attachMedia(HlsVideoRef.value);
-    hls.on(Hls.Events.MEDIA_ATTACHED, function () {
-      hls.loadSource(currVideo.m3u8);
-    });
-    console.log("当前播放视频名称", currVideo.name)
-    console.log("当前播放视频资源", currVideo.m3u8);
-  } else {
-    console.log("当前浏览器不支持播放HLS")
+  
+  // 如果已存在播放器实例，先销毁
+  if (player) {
+    player.reset();
   }
+
+  // 初始化DASH播放器
+  player = dashjs.MediaPlayer().create();
+  player.initialize(dashVideoRef.value, currVideo.mpd, true);
+  player.setAutoPlay(true);
+  
+  // 添加错误处理
+  player.on(dashjs.MediaPlayer.events.ERROR, function(e: any) {
+    console.error('DASH播放器错误:', e);
+  });
+  
+  console.log("当前播放视频名称", currVideo.name);
+  console.log("当前播放视频资源", currVideo.mpd);
 }
 
 watch(() => [form.id], () => {
@@ -54,14 +61,21 @@ onMounted(() => {
       })
       .catch(error => console.log("拉取视频资源失败，请联系管理员"));
 })
+
+// 组件卸载时清理播放器资源
+onUnmounted(() => {
+  if (player) {
+    player.reset();
+    player = null;
+  }
+});
 </script>
 
 <template>
   <div class="main clearfix">
-
     <div class="flex">
       <div class="v">
-        <video  ref="HlsVideoRef" width="1200" height="700" controls></video>
+        <video ref="dashVideoRef" width="1200" height="700" controls></video>
       </div>
       <el-card class="list">
         <template #header>
@@ -69,9 +83,9 @@ onMounted(() => {
         </template>
         <el-scrollbar height="600px" class="videos">
           <div class="video" v-for="(v, i) in form.videos" :key="i">
-            <div @click="() => form.id = i">
-              <el-image :src="v.avatar" />
-              <div style="text-align: center">
+            <div @click="() => form.id = i" class="video-item" :class="{ active: form.id === i }">
+              <el-image :src="v.avatar" class="video-thumbnail" />
+              <div class="video-info">
                 <span class="name">{{ v.title }}</span>
                 <span class="desc">{{ v.description }}</span>
               </div>
@@ -118,14 +132,46 @@ onMounted(() => {
   margin-bottom: 20px;
 }
 
+.video-item {
+  cursor: pointer;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s;
+  padding: 8px;
+}
+
+.video-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.video-item.active {
+  background-color: rgba(76, 175, 80, 0.2);
+  border-left: 3px solid #4CAF50;
+}
+
+.video-thumbnail {
+  width: 100%;
+  border-radius: 4px;
+}
+
+.video-info {
+  text-align: center;
+  margin-top: 8px;
+}
+
 .name {
   font-size: 16px;
   margin-right: 10px;
+  display: block;
+  font-weight: bold;
 }
 
 .desc {
   color: #999;
   font-size: 13px;
+  display: block;
+  margin-top: 4px;
 }
 
 #xg {
