@@ -8,7 +8,7 @@
         :key="category.id"
         @click="navigateToCategory(category.id)"
       >
-        <div class="category-icon">
+        <div class="category-icon" :style="{ backgroundImage: `url(${category.bgImage})` }">
           <i :class="category.icon"></i>
         </div>
         <div class="category-name">{{ category.name }}</div>
@@ -27,17 +27,18 @@ interface Category {
   id: number;
   name: string;
   icon: string;
+  bgImage: string; // 添加背景图片属性
 }
 
 const categories = ref<Category[]>([
-  { id: 1, name: '电影', icon: 'el-icon-video-camera' },
-  { id: 2, name: '电视剧', icon: 'el-icon-monitor' },
-  { id: 3, name: '综艺', icon: 'el-icon-star-on' },
-  { id: 4, name: '动漫', icon: 'el-icon-picture' },
-  { id: 5, name: '纪录片', icon: 'el-icon-camera' },
-  { id: 6, name: '少儿', icon: 'el-icon-present' },
-  { id: 7, name: '音乐', icon: 'el-icon-headset' },
-  { id: 8, name: '教育', icon: 'el-icon-reading' }
+  { id: 1, name: '电影', icon: 'el-icon-video-camera', bgImage: 'src/assets/电影.svg' },
+  { id: 2, name: '电视剧', icon: 'el-icon-monitor', bgImage: 'src/assets/电影.svg' },
+  { id: 3, name: '综艺', icon: 'el-icon-star-on', bgImage: 'src/assets/电影.svg' },
+  { id: 4, name: '动漫', icon: 'el-icon-picture', bgImage: 'src/assets/电影.svg' },
+  { id: 5, name: '纪录片', icon: 'el-icon-camera', bgImage: 'src/assets/电影.svg' },
+  { id: 6, name: '少儿', icon: 'el-icon-present', bgImage: 'src/assets/电影.svg' },
+  { id: 7, name: '音乐', icon: 'el-icon-headset', bgImage: 'src/assets/电影.svg' },
+  { id: 8, name: '教育', icon: 'el-icon-reading', bgImage: 'src/assets/电影.svg' }
 ]);
 
 const navigateToCategory = (categoryId: number) => {
@@ -90,8 +91,8 @@ const navigateToCategory = (categoryId: number) => {
 }
 
 .category-item:hover .category-icon {
-  background-color: #4CAF50;
-  color: white;
+  transform: scale(1.1);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 
 .category-icon {
@@ -105,11 +106,28 @@ const navigateToCategory = (categoryId: number) => {
   margin-bottom: 10px;
   transition: all 0.3s ease;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  position: relative;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+}
+
+.category-icon::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1;
 }
 
 .category-icon i {
   font-size: 24px;
-  color: #4CAF50;
+  color: white;
+  position: relative;
+  z-index: 2;
 }
 
 .category-name {

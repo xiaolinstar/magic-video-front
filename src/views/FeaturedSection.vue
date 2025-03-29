@@ -3,11 +3,11 @@
     <div class="container">
       <h2 class="section-title">精选视频</h2>
       <div class="video-grid">
-        <div v-for="video in featuredVideos" :key="video.id" class="video-card">
+        <div v-for="video in featuredVideos" :key="video.id" class="video-card" @click="navigateToVideo(video)">
           <div class="video-thumbnail">
             <img :src="video.thumbnail" :alt="video.title">
             <div class="play-overlay">
-              <i class="fas fa-play"></i>
+              <i class="el-icon-video-play"></i>
             </div>
           </div>
           <div class="video-info">
@@ -20,29 +20,39 @@
   </section>
 </template>
 
-<script>
-export default {
-  name: 'FeaturedSection',
-  data() {
-    return {
-      featuredVideos: [
-        {
-          id: 1,
-          title: '示例视频 1',
-          description: '这是一个示例视频描述',
-          thumbnail: '/path/to/thumbnail1.jpg'
-        },
-        {
-          id: 2,
-          title: '示例视频 2',
-          description: '这是另一个示例视频描述',
-          thumbnail: '/path/to/thumbnail2.jpg'
-        }
-        // 可以添加更多视频
-      ]
-    }
-  }
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { getFeaturedVideos } from '@/apis/featured';
+
+const router = useRouter();
+
+interface FeaturedVideo {
+  id: number;
+  title: string;
+  description: string;
+  thumbnail: string;
 }
+
+const featuredVideos = ref<FeaturedVideo[]>([]);
+
+onMounted(async () => {
+  try {
+    const response = await getFeaturedVideos();
+    featuredVideos.value = response.data;
+  } catch (error) {
+    console.error('获取精选视频数据失败:', error);
+  }
+});
+
+const navigateToVideo = (video: FeaturedVideo) => {
+  router.push({
+    path: '/video',
+    query: {id: video.id}
+  });
+};
+
+
 </script>
 
 <style scoped>
@@ -76,6 +86,7 @@ export default {
   overflow: hidden;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   transition: transform 0.3s ease;
+  cursor: pointer;
 }
 
 .video-card:hover {

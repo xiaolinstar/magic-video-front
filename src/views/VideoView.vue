@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, watch, ref, onUnmounted } from 'vue';
 import dashjs from 'dashjs';
-import { listVideoResources } from '@/apis/videos'
+import { listVideoResources } from '@/apis/resource';
 import { useRoute } from 'vue-router';
 
 interface IVideo {
@@ -179,3 +179,4 @@ onUnmounted(() => {
   margin: 50px;
 }
 </style>
+@/apis/resource

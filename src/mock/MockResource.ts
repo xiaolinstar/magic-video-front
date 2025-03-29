@@ -1,4 +1,14 @@
-export const mockResources = [
+interface IVideo {
+  mp4: string;  // mp4资源地址
+  m3u8: string; // hls资源地址
+  mpd: string;  // dash资源地址
+  name: string; // 资源名称
+  title: string; // 资源标题
+  description: string; // 资源描述
+  avatar: string; // 资源封面图
+}
+
+export const mockResources :IVideo[] = [
     {
       mp4: '',
       m3u8: '',
@@ -17,5 +27,31 @@ export const mockResources = [
       description: '超级好看！虽然各种性贯穿全片，但又是特别的纯情走心，甚至很多地方堪称浪漫。校霸欺负gay，围观的直男说：算了吧，恐同是2008年的流行了。有趣流畅不说教，真实冷静不偏激，内容完全对得起“性教育”的这个片名',
       avatar: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/Otis%26Ruby.jpg'
     },
-
+    {
+      mp4: '',
+      m3u8: '',
+      mpd: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/Md5-Crazy-Max/Md5-Crazy-Max.mpd',
+      name: '性爱自修室 Otis & Ruby',
+      title: 'Sex Education: Otis & Ruby',
+      description: '超级好看！虽然各种性贯穿全片，但又是特别的纯情走心，甚至很多地方堪称浪漫。校霸欺负gay，围观的直男说：算了吧，恐同是2008年的流行了。有趣流畅不说教，真实冷静不偏激，内容完全对得起“性教育”的这个片名',
+      avatar: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/xuguanghan.jpg'
+    },
+    {
+      mp4: '',
+      m3u8: '',
+      mpd: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/Md5-Crazy-Max/Md5-Crazy-Max.mpd',
+      name: '性爱自修室 Otis & Ruby',
+      title: 'Sex Education: Otis & Ruby',
+      description: '超级好看！虽然各种性贯穿全片，但又是特别的纯情走心，甚至很多地方堪称浪漫。校霸欺负gay，围观的直男说：算了吧，恐同是2008年的流行了。有趣流畅不说教，真实冷静不偏激，内容完全对得起“性教育”的这个片名',
+      avatar: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/sweet-home.jpg'
+    },
+    {
+      mp4: '',
+      m3u8: '',
+      mpd: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/Md5-Crazy-Max/Md5-Crazy-Max.mpd',
+      name: '性爱自修室 Otis & Ruby',
+      title: 'Sex Education: Otis & Ruby',
+      description: '超级好看！虽然各种性贯穿全片，但又是特别的纯情走心，甚至很多地方堪称浪漫。校霸欺负gay，围观的直男说：算了吧，恐同是2008年的流行了。有趣流畅不说教，真实冷静不偏激，内容完全对得起“性教育”的这个片名',
+      avatar: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/last-guys.jpg'
+    },
 ];

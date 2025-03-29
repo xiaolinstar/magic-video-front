@@ -18,53 +18,35 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-// 导入背景图片
-import backgroundImage from '@/assets/background.jpg';
+import { getBanners } from '@/apis/banner';
+import { onMounted } from 'vue';
+
 
 const router = useRouter();
 
-interface Banner {
+interface IBanner {
   id: number;
   title: string;
   description: string;
   image: string;
-  link: string;
 }
 
-// 轮播图数据
-const banners = ref<Banner[]>([
-  { 
-    id: 1, 
-    title: '热门大片', 
-    description: '最新上映的热门电影', 
-    image: backgroundImage,
-    link: '/video?id=1'
-  },
-  { 
-    id: 2, 
-    title: '经典剧集', 
-    description: '经典电视剧重温', 
-    image: backgroundImage,
-    link: '/video?id=2'
-  },
-  { 
-    id: 3, 
-    title: '独家内容', 
-    description: '平台独家视频内容', 
-    image: backgroundImage,
-    link: '/video?id=3'
-  },
-  { 
-    id: 4, 
-    title: '热播综艺', 
-    description: '最受欢迎的综艺节目', 
-    image: backgroundImage,
-    link: '/video?id=4'
-  }
-]);
+const banners = ref<IBanner[]>([]);
 
-const navigateToBanner = (banner: Banner) => {
-  router.push(banner.link);
+onMounted(async () => {
+  try {
+    const response = await getBanners();
+    banners.value = response.data;
+  } catch (error) {
+    console.error('获取轮播图数据失败:', error);
+  }
+});
+
+const navigateToBanner = (banner: IBanner) => {
+  router.push({
+    path: '/video',
+    query: {id: banner.id}
+  });
 };
 </script>
 

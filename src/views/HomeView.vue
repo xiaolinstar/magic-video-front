@@ -15,7 +15,7 @@
     <!-- 新剧展示 -->
     <div class="video-section">
       <h2>新剧</h2>
-      <VideoList :videos="newShows" />
+      <VideoList :videos="latestVideos" />
     </div>
 
     <!-- 精选专题 -->
@@ -24,14 +24,14 @@
     <!-- 经典好剧展示 -->
     <div class="video-section">
       <h2>经典好剧</h2>
-      <VideoList :videos="classicShows" />
+      <VideoList :videos="classicVideos" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { listVideoResources } from '@/apis/videos';
+import { listVideoResources } from '@/apis/resource';
 // 修正组件导入路径，使用绝对路径
 import Carousel from '@/views/Carousel.vue';
 import VideoList from '@/views/VideoList.vue';
@@ -49,8 +49,8 @@ interface IVideo {
 }
 
 const recommendedVideos = ref<IVideo[]>([]);
-const newShows = ref<IVideo[]>([]);
-const classicShows = ref<IVideo[]>([]);
+const latestVideos = ref<IVideo[]>([]);
+const classicVideos = ref<IVideo[]>([]);
 
 // 获取视频资源并更新数据
 onMounted(() => {
@@ -61,12 +61,15 @@ onMounted(() => {
       // 确保视频数据有效
       if (videos && videos.length > 0) {
         // 分配视频到不同区域
-        const totalVideos = videos.length;
-        const videosPerSection = Math.floor(totalVideos / 3);
-        
-        recommendedVideos.value = videos.slice(0, videosPerSection);
-        newShows.value = videos.slice(videosPerSection, videosPerSection * 2);
-        classicShows.value = videos.slice(videosPerSection * 2);
+        // const totalVideos = videos.length;
+        // const videosPerSection = Math.floor(totalVideos / 3);
+
+        // recommendedVideos.value = videos.slice(0, videosPerSection);
+        // latestVideos.value = videos.slice(videosPerSection, videosPerSection * 2);
+        // classicVideos.value = videos.slice(videosPerSection * 2);
+        recommendedVideos.value = videos.slice(0);
+        latestVideos.value = videos.slice();
+        classicVideos.value = videos.slice();
       }
     })
     .catch(error => console.log("拉取视频资源失败，请联系管理员"));
@@ -89,4 +92,4 @@ onMounted(() => {
   padding-bottom: 5px;
   border-bottom: 2px solid #4CAF50;
 }
-</style>
+</style>@/apis/resource
