@@ -9,7 +9,9 @@ export const API_URL = {
     // 使用nginx解决跨域问题
     URL_RESOURCE: `/api/core/resource/all`,
     URL_USER: '/api/core/user/list',
-
+    URL_BANNER: `/api/core/banner/list`,  // 视频轮播图
+    URL_FEATURED_VIDEO: `/api/core/featured/list`,  // 精选视频
+    
     // 鉴权接口
     URL_AUTH_LOGIN: `/api/auth/login`,
     URL_AUTH_REGISTER: `/api/auth/register`,
@@ -17,6 +19,10 @@ export const API_URL = {
     URL_AUTH_USER: `/api/auth/user`,
 
     // URL_AUTH_REGISTER: `http://localhost:9000/auth/register`,
+
+    URL_VIDEO_CHUNK: `/api/multimedia/video/chunk`,
+    URL_VIDEO_MERGE: `/api/multimedia/video/merge`,
+    URL_VIDEO_INFO: `/api/multimedia/video/info`,
 }
 
 

@@ -4,9 +4,15 @@ import { mockResources } from "@/mock/MockResource";
 
 // 获取视频资源列表
 export const listVideoResources = () => {
-  return Promise.resolve({
-    data: mockResources
-  });
+  if(import.meta.env.DEV) {
+    // 开发环境下使用 mock 数据
+    return Promise.resolve({
+      data: mockResources
+    }); 
+  } else {
+    // 生产环境下使用真实数据
+    return axios.get(`${API_URL.URL_RESOURCE}`);
+  }
 };
 
 /*

@@ -34,7 +34,7 @@ import { ref, onMounted } from 'vue';
 import { listVideoResources } from '@/apis/resource';
 // 修正组件导入路径，使用绝对路径
 import Carousel from '@/views/Carousel.vue';
-import VideoList from '@/views/VideoList.vue';
+import VideoList from '@/views/pages/VideoList.vue';
 import CategorySection from '@/views/CategorySection.vue';
 import FeaturedSection from '@/views/FeaturedSection.vue';
 
