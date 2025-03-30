@@ -1,5 +1,5 @@
 
-import request from '@/utils/request';
+import axiosService from '@/utils/request';
 import envConfig from '@/config/env';
 
 /**
@@ -13,7 +13,7 @@ export const uploadVideoChunk = (chunk: Blob, fileName: string, index: number, f
   const formData = new FormData();
   formData.append('file', chunk, `${fileName}.part${index}`);
   
-  return request({
+  return axiosService({
     url: '/multimedia/video/chunk',
     method: 'post',
     data: formData,
@@ -36,7 +36,7 @@ export const uploadVideoChunk = (chunk: Blob, fileName: string, index: number, f
  * @param chunks 分片总数
  */
 export const mergeVideoChunks = (md5: string, filename: string, chunks: number) => {
-  return request({
+  return axiosService({
     url: '/multimedia/video/merge',
     method: 'post',
     data: {
@@ -67,7 +67,7 @@ export const submitVideoInfo = (videoInfo: any, coverFile: File | null) => {
   formData.append('description', videoInfo.description);
   formData.append('privacy', videoInfo.privacy);
   
-  return request({
+  return axiosService({
     url: '/api/videos',
     method: 'post',
     data: formData,

@@ -30,6 +30,8 @@ const route = useRoute();
 .content-wrapper {
   display: flex;
   flex: 1;
+  max-width: 100%;
+  width: 100%;
 }
 
 .content-wrapper.full-width {
@@ -37,7 +39,7 @@ const route = useRoute();
 }
 
 .side-navigation {
-  width: 200px;
+  width: 160px; /* 进一步减小侧边栏宽度 */
   flex-shrink: 0;
   background-color: #f8f9fa;
   border-right: 1px solid #e9ecef;
@@ -45,12 +47,17 @@ const route = useRoute();
 
 .main-content {
   flex: 1;
-  max-width: 100%;
-  padding: 0 20px;
+  max-width: 80%; /* 设置最大宽度为80% */
+  width: calc(100% - 160px); /* 设置主内容区域宽度 */
+  padding: 0 20px; /* 增加内边距 */
+  box-sizing: border-box;
+  margin: 0 auto; /* 居中显示 */
 }
 
 .main-content.no-padding {
   padding: 0;
+  width: 100%; /* 当没有侧边栏时占据全宽 */
+  max-width: 80%; /* 保持最大宽度为80% */
 }
 
 /* 全局样式 */
@@ -68,11 +75,13 @@ a {
 
 @media (max-width: 768px) {
   .side-navigation {
-    width: 60px;
+    width: 50px; /* 进一步减小移动端侧边栏宽度 */
   }
   
   .main-content {
-    padding: 0 10px;
+    width: calc(100% - 50px); /* 响应式调整主内容区域宽度 */
+    padding: 0 20px;
+    max-width: 90%; /* 移动端增加最大宽度比例 */
   }
 }
 </style>

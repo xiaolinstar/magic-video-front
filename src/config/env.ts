@@ -1,14 +1,18 @@
 // 环境配置文件
 interface EnvConfig {
+  mode: string;
   baseUrl: string;
   mockEnabled: boolean;
   apiTimeout: number;
   uploadChunkSize: number;
 }
+const mode = import.meta.env.MODE;
+const baseUrl = import.meta.env.VITE_BASE_URL;
 
 // 开发环境 - 使用Mock数据
 const developmentMock: EnvConfig = {
-  baseUrl: '/api',
+  mode: mode,
+  baseUrl: baseUrl,
   mockEnabled: true,
   apiTimeout: 10000,
   uploadChunkSize: 5 * 1024 * 1024
@@ -16,7 +20,8 @@ const developmentMock: EnvConfig = {
 
 // 开发环境 - 直连后端服务
 const developmentDirect: EnvConfig = {
-  baseUrl: 'http://localhost:9000/api',
+  mode: mode,
+  baseUrl: baseUrl,
   mockEnabled: false,
   apiTimeout: 30000,
   uploadChunkSize: 5 * 1024 * 1024
@@ -24,7 +29,8 @@ const developmentDirect: EnvConfig = {
 
 // 测试环境
 const test: EnvConfig = {
-  baseUrl: 'http://test-api.example.com/api',
+  mode: mode,
+  baseUrl: baseUrl,
   mockEnabled: false,
   apiTimeout: 15000,
   uploadChunkSize: 5 * 1024 * 1024
@@ -32,7 +38,8 @@ const test: EnvConfig = {
 
 // 生产环境
 const production: EnvConfig = {
-  baseUrl: '/api',
+  mode: mode,
+  baseUrl: baseUrl,
   mockEnabled: false,
   apiTimeout: 15000,
   uploadChunkSize: 5 * 1024 * 1024

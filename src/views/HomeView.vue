@@ -78,13 +78,13 @@ onMounted(() => {
 
 <style scoped>
 .home {
-  padding: 20px;
+  padding: 10px;
   max-width: 1200px;
   margin: 0 auto;
 }
 
 .video-section {
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .video-section h2 {

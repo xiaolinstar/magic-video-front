@@ -1,6 +1,6 @@
-import axios from "axios";
 import { mockBanners } from "@/mock/MockBanner";
 import { API_URL } from "@/common/constant/urls";
+import axiosService from "@/utils/request";
 
 // 获取轮播图数据
 export const getBanners = () => {
@@ -9,9 +9,10 @@ export const getBanners = () => {
         return Promise.resolve({
             data: mockBanners
         });
+        // returen axiosService.get('/banner');
     } else {
         // 生产环境下使用真实数据
-        return axios.get(`${API_URL.URL_BANNER}`);
+        return axiosService.get(`${API_URL.URL_BANNER}`);
     }
 }
 

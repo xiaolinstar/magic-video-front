@@ -3,7 +3,7 @@
     <div class="container">
       <h2 class="section-title">精选视频</h2>
       <div class="video-grid">
-        <div v-for="video in featuredVideos" :key="video.id" class="video-card" @click="navigateToVideo(video)">
+        <div v-for="video in featuredVideos" :key="video.id" class="video-card" @click.prevent="navigateToVideo(video)">
           <div class="video-thumbnail">
             <img :src="video.thumbnail" :alt="video.title">
             <div class="play-overlay">
@@ -37,6 +37,7 @@ interface FeaturedVideo {
 const featuredVideos = ref<FeaturedVideo[]>([]);
 
 onMounted(async () => {
+
   try {
     const response = await getFeaturedVideos();
     featuredVideos.value = response.data;
