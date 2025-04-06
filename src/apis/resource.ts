@@ -2,6 +2,7 @@ import axiosService from '@/utils/request';
 import { API_URL } from '@/common/constant/urls';
 import envConfig from '@/config/env';
 import { mockResources } from '@/mock/MockResource';
+import { mockFeaturedVideos } from '@/mock/MockFeatured';
 
 // 获取视频资源列表
 export const listVideoResources = () => {
@@ -10,12 +11,57 @@ export const listVideoResources = () => {
     return Promise.resolve({
       data: mockResources
     });
-    // return axiosService.get('/resources');
   } else {
     // 使用真实数据
     return axiosService.get(`${API_URL.URL_RESOURCE}`);
   }
 };
 
+// 获取推荐视频
+export const getRecommendVideos = () => {
+  if (envConfig.mockEnabled) {
+    return Promise.resolve({
+      data: mockResources
+    });
+  } else {
+    return axiosService.get(`${API_URL.URL_RECOMMEND}`);
+  } 
+}
+
+// 获取最新视频
+export const getLatestVideos = () => {
+  if (envConfig.mockEnabled) {
+    return Promise.resolve({
+      data: mockResources
+    });
+  } else {
+    return axiosService.get(`${API_URL.URL_LATEST}`);
+  }
+}
+
+// 获取经典视频
+export const getClassicVideos = () => {
+  if (envConfig.mockEnabled) {
+    return Promise.resolve({
+      data: mockResources
+    });
+  } else {
+    return axiosService.get(`${API_URL.URL_CLASSIC}`);
+  }
+}
+
+// 获取精选视频数据
+export const getFeaturedVideos = () => {
+  if (envConfig.mockEnabled) {
+    // 开发环境下使用 mock 数据
+    return Promise.resolve({
+      data: mockFeaturedVideos
+    });
+    // return axiosService.get('/featured');
+  } else {
+    // 生产环境下使用真实数据
+    return axiosService.get(`${API_URL.URL_FEATURED}`);
+  }
+};
 
 

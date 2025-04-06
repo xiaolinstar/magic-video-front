@@ -1,7 +1,9 @@
 <template>
   <header>
     <nav class="navbar">
-      <div class="logo">Magic Video</div>
+      <div class="logo">
+        <router-link to="/">魔法视频</router-link>
+      </div>
       <div class="search-container">
         <input type="text" placeholder="搜索视频..." v-model="searchQuery" />
         <button @click="search">搜索</button>

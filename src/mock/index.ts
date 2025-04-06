@@ -1,8 +1,7 @@
 import Mock from 'mockjs';
 import envConfig from '@/config/env';
 import { mockResources } from '@/mock/MockResource';
-import { messageConfig } from 'element-plus';
-import { mockFeaturedVideos } from './MockFeaturedVideo';
+import { mockFeaturedVideos } from './MockFeatured';
 
 // 无法使用 Mock 拦截，会导致 dashjs 无法正常使用
 

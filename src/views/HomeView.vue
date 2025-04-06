@@ -9,23 +9,21 @@
       <VideoList :videos="recommendedVideos" />
     </div>
 
-    <!-- 分类浏览 -->
-    <CategorySection />
 
     <!-- 新剧展示 -->
     <div class="video-section">
-      <h2>新剧</h2>
+      <h2>新剧上映</h2>
       <VideoList :videos="latestVideos" />
     </div>
-
-    <!-- 精选专题 -->
-    <FeaturedSection />
 
     <!-- 经典好剧展示 -->
     <div class="video-section">
       <h2>经典好剧</h2>
       <VideoList :videos="classicVideos" />
     </div>
+
+    <!-- 精选视频 -->
+    <FeaturedSection />    
   </div>
 </template>
 
@@ -78,18 +76,37 @@ onMounted(() => {
 
 <style scoped>
 .home {
-  padding: 10px;
-  max-width: 1200px;
-  margin: 0 auto;
+  padding: 0; /* 移除内边距 */
+  max-width: 100%;
+  width: 100%;
+  margin: 0; /* 移除外边距 */
+  overflow-x: hidden; /* 防止水平滚动 */
 }
 
 .video-section {
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  padding: 0 20px; /* 添加左右内边距，保持内容与边缘有一定距离 */
 }
 
 .video-section h2 {
-  margin-bottom: 15px;
-  padding-bottom: 5px;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
   border-bottom: 2px solid #4CAF50;
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* 添加响应式设计 */
+@media (max-width: 768px) {
+  .video-section {
+    padding: 0 10px;
+    margin-bottom: 20px;
+  }
+  
+  .video-section h2 {
+    font-size: 20px;
+    margin-bottom: 15px;
+  }
 }
 </style>@/apis/resource

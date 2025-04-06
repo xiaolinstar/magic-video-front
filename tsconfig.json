@@ -4,6 +4,7 @@
   "compilerOptions": {
     "verbatimModuleSyntax": true,
     "allowSyntheticDefaultImports": true,
+    "types": ["element-plus/global"],
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]

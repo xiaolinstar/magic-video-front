@@ -4,8 +4,8 @@
       <h2 class="section-title">精选视频</h2>
       <div class="video-grid">
         <div v-for="video in featuredVideos" :key="video.id" class="video-card" @click.prevent="navigateToVideo(video)">
-          <div class="video-thumbnail">
-            <img :src="video.thumbnail" :alt="video.title">
+          <div class="video-avatar">
+            <img :src="video.avatar" :alt="video.title">
             <div class="play-overlay">
               <i class="el-icon-video-play"></i>
             </div>
@@ -23,18 +23,18 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { getFeaturedVideos } from '@/apis/featured';
+import { getFeaturedVideos } from '@/apis/resource';
 
 const router = useRouter();
 
-interface FeaturedVideo {
+interface Featured {
   id: number;
   title: string;
   description: string;
-  thumbnail: string;
+  avatar: string;
 }
 
-const featuredVideos = ref<FeaturedVideo[]>([]);
+const featuredVideos = ref<Featured[]>([]);
 
 onMounted(async () => {
 
@@ -46,7 +46,7 @@ onMounted(async () => {
   }
 });
 
-const navigateToVideo = (video: FeaturedVideo) => {
+const navigateToVideo = (video: Featured) => {
   router.push({
     path: '/video',
     query: {id: video.id}
@@ -94,12 +94,12 @@ const navigateToVideo = (video: FeaturedVideo) => {
   transform: translateY(-5px);
 }
 
-.video-thumbnail {
+.video-avatar {
   position: relative;
   padding-top: 56.25%; /* 16:9 比例 */
 }
 
-.video-thumbnail img {
+.video-avatar img {
   position: absolute;
   top: 0;
   left: 0;

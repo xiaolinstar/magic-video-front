@@ -1,13 +1,14 @@
 <template>
   <div class="carousel-section">
-    <el-carousel :interval="5000" type="card" height="400px">
+    <el-carousel :interval="3000" height="800px" indicator-position="" arrow="hover" :autoplay="true">
       <el-carousel-item v-for="banner in banners" :key="banner.id">
-        <div class="carousel-item" @click="navigateToBanner(banner)">
-          <el-image :src="banner.image" fit="cover" class="banner-image" />
+        <div class="carousel-item" @click="navigateToVideo(banner.id)">
+          <div class="avatar-container">
+            <el-image :src="banner.avatar" fit="contain" class="banner-avatar" />
+          </div>
           <div class="banner-content">
             <h2>{{ banner.title }}</h2>
             <p>{{ banner.description }}</p>
-            <button class="watch-btn">立即观看</button>
           </div>
         </div>
       </el-carousel-item>
@@ -28,7 +29,7 @@ interface IBanner {
   id: number;
   title: string;
   description: string;
-  image: string;
+  avatar: string;
 }
 
 const banners = ref<IBanner[]>([]);
@@ -36,117 +37,123 @@ const banners = ref<IBanner[]>([]);
 onMounted(async () => {
   try {
     const response = await getBanners();
+    console.log('获取轮播图数据成功:', response.data);
     banners.value = response.data;
   } catch (error) {
     console.error('获取轮播图数据失败:', error);
   }
 });
 
-const navigateToBanner = (banner: IBanner) => {
+const navigateToVideo = (videoId: number) => {
   router.push({
     path: '/video',
-    query: {id: banner.id}
+    query: {id: videoId}
   });
 };
 </script>
 
 <style scoped>
 .carousel-section {
+  width: 100%;
   margin-bottom: 40px;
+  padding: 0;
+}
+
+.el-carousel {
+  width: 100%;
+}
+
+/* 修改覆盖样式，确保轮播功能正常 */
+:deep(.el-carousel__container) {
+  width: 100%;
+}
+
+:deep(.el-carousel__item) {
+  width: 100% !important;
+}
+
+:deep(.el-carousel__indicators) {
+  z-index: 10;
+}
+
+:deep(.el-carousel__arrow) {
+  font-size: 20px;
+  width: 40px;
+  height: 40px;
 }
 
 .carousel-item {
   position: relative;
   height: 100%;
-  border-radius: 8px;
+  width: 100%;
   overflow: hidden;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  background-color: #000; /* 添加黑色背景 */
 }
 
-.banner-image {
+.avatar-container {
+  position: relative;
   width: 100%;
   height: 100%;
-  transition: transform 0.5s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.carousel-item:hover .banner-image {
-  transform: scale(1.05);
+.banner-avatar {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain; /* 保持图像比例 */
+  display: block;
+  margin: 0 auto;
 }
 
 .banner-content {
   position: absolute;
   bottom: 0;
   left: 0;
-  right: 0;
-  padding: 20px;
-  background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0));
-  color: white;
+  width: 100%;
+  padding: 50px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  color: #fff;
   text-align: left;
 }
 
 .banner-content h2 {
-  font-size: 24px;
-  margin-bottom: 10px;
-  text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+  font-size: 42px;
+  margin-bottom: 20px;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .banner-content p {
-  font-size: 16px;
-  margin-bottom: 15px;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+  font-size: 22px;
+  margin-bottom: 30px;
+  max-width: 80%;
+  line-height: 1.5;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
-.watch-btn {
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.3s ease;
-}
 
-.watch-btn:hover {
-  background-color: #45a049;
-}
-
-/* 自定义 Element Plus 轮播图样式 */
-:deep(.el-carousel__item) {
-  border-radius: 8px;
-}
-
-:deep(.el-carousel__arrow) {
-  background-color: rgba(0, 0, 0, 0.5);
-}
-
-:deep(.el-carousel__arrow:hover) {
-  background-color: rgba(0, 0, 0, 0.7);
-}
-
-:deep(.el-carousel__indicators) {
-  bottom: 20px;
-}
-
-:deep(.el-carousel__button) {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.5);
-}
-
-:deep(.el-carousel__indicator.is-active .el-carousel__button) {
-  background-color: #4CAF50;
-}
-
+/* 响应式设计 */
 @media (max-width: 768px) {
+  .carousel-section {
+    padding: 0;
+  }
+  
+  .banner-content {
+    padding: 30px;
+  }
+  
   .banner-content h2 {
-    font-size: 20px;
+    font-size: 28px;
+    margin-bottom: 10px;
   }
   
   .banner-content p {
-    font-size: 14px;
+    font-size: 16px;
+    margin-bottom: 15px;
   }
 }
 </style>

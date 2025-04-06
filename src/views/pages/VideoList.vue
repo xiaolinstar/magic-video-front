@@ -10,12 +10,12 @@
           </div>
         </div>
         <div class="video-info">
-          <h3 class="video-title">{{ video.title }}</h3>
+          <h3 class="video-title" :title="video.title">{{ video.title }}</h3>
           <div class="video-meta">
             <span class="play-count"><i class="el-icon-view"></i> 8.2万</span>
             <span class="danmaku-count"><i class="el-icon-chat-dot-round"></i> 1024</span>
           </div>
-          <p class="video-desc">{{ video.description }}</p>
+          <p class="video-desc" :title="video.description">{{ video.description }}</p>
         </div>
       </router-link>
     </div>
@@ -44,37 +44,35 @@ defineProps({
 <style scoped>
 .video-list-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 20px;
-  margin-bottom: 30px;
-  justify-content: center;
+  width: 100%;
 }
 
 .video-card {
   border-radius: 8px;
   overflow: hidden;
   background-color: #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  transition: all 0.3s ease;
-  margin: 0 auto;
-  max-width: 280px;
-  width: 100%;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .video-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .video-link {
-  text-decoration: none;
-  color: inherit;
   display: block;
+  color: inherit;
+  text-decoration: none;
 }
 
 .video-cover-wrapper {
   position: relative;
-  padding-top: 56.25%; /* 16:9 宽高比 */
+  width: 100%;
+  height: 0;
+  padding-bottom: 56.25%; /* 16:9 宽高比 */
   overflow: hidden;
 }
 
@@ -84,11 +82,7 @@ defineProps({
   left: 0;
   width: 100%;
   height: 100%;
-  transition: transform 0.3s ease;
-}
-
-.video-card:hover .video-cover {
-  transform: scale(1.1);
+  object-fit: cover;
 }
 
 .video-duration {
@@ -96,7 +90,7 @@ defineProps({
   bottom: 8px;
   right: 8px;
   background-color: rgba(0, 0, 0, 0.7);
-  color: #fff;
+  color: white;
   padding: 2px 6px;
   border-radius: 4px;
   font-size: 12px;
@@ -113,12 +107,12 @@ defineProps({
   justify-content: center;
   background-color: rgba(0, 0, 0, 0.3);
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.3s;
 }
 
 .play-icon-overlay i {
   font-size: 48px;
-  color: #fff;
+  color: white;
 }
 
 .video-card:hover .play-icon-overlay {
@@ -127,69 +121,67 @@ defineProps({
 
 .video-info {
   padding: 12px;
-  background-color: #fff;
 }
 
 .video-title {
   margin: 0 0 8px 0;
-  font-size: 15px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 600;
   line-height: 1.4;
-  color: #333;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  height: 44px; /* 固定高度，约两行文字 */
   overflow: hidden;
-  height: 42px;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* 限制在2行内 */
+  -webkit-box-orient: vertical;
 }
 
 .video-meta {
   display: flex;
-  align-items: center;
+  gap: 12px;
   margin-bottom: 8px;
   font-size: 12px;
-  color: #666;
-}
-
-.play-count {
-  margin-right: 12px;
-}
-
-.danmaku-count {
-  color: #00a1d6;
+  color: #909399;
 }
 
 .video-desc {
   margin: 0;
-  font-size: 12px;
-  color: #666;
+  font-size: 13px;
+  color: #606266;
   line-height: 1.5;
+  height: 40px; /* 固定高度，约两行文字 */
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 2; /* 限制在2行内 */
   -webkit-box-orient: vertical;
-  height: 36px;
 }
 
-/* 响应式布局 */
+/* 响应式设计 */
+@media (max-width: 1200px) {
+  .video-list-container {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
+}
+
 @media (max-width: 768px) {
   .video-list-container {
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 15px;
   }
   
-  .video-title {
-    font-size: 14px;
-    height: 39px;
+  .video-info {
+    padding: 8px;
   }
   
-  .video-meta {
-    margin-bottom: 4px;
+  .video-title {
+    font-size: 14px;
+    height: 40px;
   }
   
   .video-desc {
-    display: none;
+    font-size: 12px;
+    height: 36px;
   }
 }
 
@@ -199,15 +191,8 @@ defineProps({
     gap: 10px;
   }
   
-  .video-info {
-    padding: 8px;
-  }
-  
-  .video-title {
-    font-size: 13px;
-    margin-bottom: 4px;
-    -webkit-line-clamp: 1;
-    height: 18px;
+  .play-icon-overlay i {
+    font-size: 36px;
   }
 }
 </style>

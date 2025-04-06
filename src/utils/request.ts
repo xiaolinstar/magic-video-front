@@ -2,14 +2,14 @@ import axios from 'axios';
 import envConfig from '@/config/env';
 
 const axiosService = axios.create({
-  baseURL: envConfig.baseUrl,
-  timeout: envConfig.apiTimeout
+  baseURL: '/api',
+  timeout: envConfig.apiTimeout,
 });
 
 // 请求拦截器
 axiosService.interceptors.request.use(
   (config) => {
-    console.log('Mock请求拦截器', config.url);
+    console.log('Axios 请求拦截器', config.url);
     // 可以在这里添加mock请求的公共处理逻辑
     return config;
   },
@@ -21,8 +21,7 @@ axiosService.interceptors.request.use(
 // 响应拦截器
 axiosService.interceptors.response.use(
   (response) => {
-    console.log('Mock响应拦截器', response.config.url);
-    console.log(response)
+    console.log('Axios 响应拦截器', response.config.url);
     return response.data;
   },
   (error) => {

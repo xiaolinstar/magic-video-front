@@ -7,7 +7,7 @@ interface EnvConfig {
   uploadChunkSize: number;
 }
 const mode = import.meta.env.MODE;
-const baseUrl = import.meta.env.VITE_BASE_URL;
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 // 开发环境 - 使用Mock数据
 const developmentMock: EnvConfig = {
@@ -47,9 +47,11 @@ const production: EnvConfig = {
 
 // 根据环境变量和模式选择配置
 const getEnvConfig = (): EnvConfig => {
-  const env = import.meta.env.MODE || 'development';
+  const env = import.meta.env.NODE_ENV || 'development';
   const useMock = import.meta.env.VITE_USE_MOCK === 'true';
-  
+  console.log('env: ', env);
+  console.log('useMock: ', useMock);
+
   if (env === 'development') {
     return useMock ? developmentMock : developmentDirect;
   } else if (env === 'test') {
@@ -58,5 +60,7 @@ const getEnvConfig = (): EnvConfig => {
     return production;
   }
 };
+
+console.log('envConfig: ', getEnvConfig());
 
 export default getEnvConfig();

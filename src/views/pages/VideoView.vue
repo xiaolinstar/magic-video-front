@@ -5,6 +5,7 @@ import { listVideoResources } from '@/apis/resource';
 import { useRoute, useRouter } from 'vue-router';
 
 interface IVideo {
+  id: number;
   mp4: string;  // mp4资源地址
   m3u8: string; // hls资源地址
   mpd: string;  // dash资源地址
@@ -50,8 +51,8 @@ const updateVideo = async() => {
   console.log("当前播放视频资源", currVideo.mpd);
   
   // 更新URL，不刷新页面
-  router.replace({ 
-    query: { ...route.query, id: form.id.toString() } 
+  await router.replace({
+    query: {...route.query, id: form.id.toString()}
   });
 }
 
@@ -129,8 +130,8 @@ onUnmounted(() => {
             :class="{ active: form.id === index }"
             @click="form.id = index"
           >
-            <div class="video-thumbnail-container">
-              <el-image :src="video.avatar" fit="cover" class="video-thumbnail" />
+            <div class="video-avatar-container">
+              <el-image :src="video.avatar" fit="cover" class="video-avatar" />
               <div class="play-icon"><i class="el-icon-video-play"></i></div>
             </div>
             <div class="video-details">
@@ -286,7 +287,7 @@ onUnmounted(() => {
   background-color: #f0f8ff;
 }
 
-.video-thumbnail-container {
+.video-avatar-container {
   position: relative;
   width: 120px;
   height: 76px;
@@ -294,7 +295,7 @@ onUnmounted(() => {
   overflow: hidden;
 }
 
-.video-thumbnail {
+.video-avatar {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -363,7 +364,7 @@ onUnmounted(() => {
     height: 90px;
   }
   
-  .video-thumbnail-container {
+  .video-avatar-container {
     width: 100px;
     height: 66px;
   }
