@@ -109,7 +109,7 @@
           <el-form-item label="视频标题" prop="title">
             <el-input 
               v-model="videoInfo.title" 
-              placeholder="请输入视频标题（5-50个字符）"
+              placeholder="请输入视频标题（2-50个字符）"
               maxlength="50"
               show-word-limit
             ></el-input>
@@ -181,7 +181,7 @@
                 <div class="cover-actions">
                   <el-button 
                     type="danger" 
-                    size="mini" 
+                    size="small"
                     circle 
                     icon="el-icon-delete"
                     @click="removeCover"
@@ -236,10 +236,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onBeforeUnmount, computed } from 'vue';
+import { ref, reactive, onBeforeUnmount } from 'vue';
 import { useRouter } from 'vue-router';
 import { ElMessage, ElForm } from 'element-plus';
 import SparkMD5 from 'spark-md5';
+
 // 导入新的API方法
 import { uploadVideoChunk, mergeVideoChunks, submitVideoInfo } from '@/apis/upload';
 
@@ -250,32 +251,88 @@ const videoPreview = ref<HTMLVideoElement | null>(null);
 const videoForm = ref<InstanceType<typeof ElForm> | null>(null);
 const tagInput = ref<HTMLInputElement | null>(null);
 
+
+// 步骤控制
+const currentStep = ref(1);
+
+// 拖拽状态
+const isDragover = ref(false);
+
+// 视频文件
+const videoFile = ref<File | null>(null);
+const videoPreviewUrl = ref('');
+
+// 封面图片
+const coverUrl = ref('');
+const coverFile = ref<File | null>(null);
+
+// 标签输入控制
+const inputTagVisible = ref(false);
+const inputTagValue = ref('');
+
 // 上传相关状态
 const isUploading = ref(false);
 const uploadProgress = ref(0);
 const uploadPaused = ref(false);
 const uploadedChunks = ref(0);
 const totalChunks = ref(0);
-const chunkSize = 5 * 1024 * 1024; // 5MB 分片大小
+const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB 分片大小
 const uploadQueue = ref<Array<{ chunk: Blob, index: number }>>([]);
 const currentUploads = ref<Array<{ id: number, controller: AbortController }>>([]);
 const maxConcurrentUploads = 3; // 最大并发上传数
 const videoMD5 = ref('');
 const uploadedChunkIds = ref<Set<number>>(new Set());
 
+// 视频信息表单
+const videoInfo = reactive({
+  videoId: '', // 视频 id
+  md5: '', // 视频 md5 值
+  title: '默认标题',
+  category: '',
+  tags: [] as string[],
+  description: '这是一个描述，默认的，欢迎覆盖',
+  privacy: 'public'
+});
+
+// 表单验证规则
+const rules = {
+  title: [
+    { required: true, message: '请输入视频标题', trigger: 'blur' },
+    { min: 2, max: 50, message: '标题长度在 2 到 50 个字符之间', trigger: 'blur' }
+  ],
+  category: [
+    { required: true, message: '请选择视频分类', trigger: 'change' }
+  ],
+  description: [
+    { max: 200, message: '简介不能超过200个字符', trigger: 'blur' }
+  ]
+};
+
 // 格式化进度条显示
-const progressFormat = (percentage: number) => {
+const progressFormat = (percentage: number) : string => {
   if (percentage === 100) {
     return '上传完成';
   }
   return `${percentage}%`;
 };
 
-// 计算文件MD5
+// 文件大小格式化
+// 返回格式如 1.23MB
+const formatFileSize = (bytes: number) : string => {
+  if (bytes === 0) return '0 B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return (bytes / Math.pow(k, i)).toFixed(2) + ' ' + sizes[i];
+};
+
+
+// 计算文件 MD5
+// 如果视频较大，可以选择部分内容进行计算，提高速度
 const calculateFileMD5 = async (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
     const blobSlice = File.prototype.slice;
-    const chunks = Math.ceil(file.size / chunkSize);
+    const chunks = Math.ceil(file.size / CHUNK_SIZE);
     let currentChunk = 0;
     const spark = new SparkMD5.ArrayBuffer();
     const fileReader = new FileReader();
@@ -299,8 +356,8 @@ const calculateFileMD5 = async (file: File): Promise<string> => {
     };
     
     function loadNext() {
-      const start = currentChunk * chunkSize;
-      const end = start + chunkSize >= file.size ? file.size : start + chunkSize;
+      const start = currentChunk * CHUNK_SIZE;
+      const end = start + CHUNK_SIZE >= file.size ? file.size : start + CHUNK_SIZE;
       fileReader.readAsArrayBuffer(blobSlice.call(file, start, end));
     }
     
@@ -310,16 +367,16 @@ const calculateFileMD5 = async (file: File): Promise<string> => {
 
 // 创建文件分片
 const createFileChunks = (file: File): Array<{ chunk: Blob, index: number }> => {
-  const chunks = [];
+  const chunks = Array<{ chunk: Blob, index: number }>();
   let cur = 0;
   let index = 0;
   
   while (cur < file.size) {
     chunks.push({
-      chunk: file.slice(cur, cur + chunkSize),
+      chunk: file.slice(cur, cur + CHUNK_SIZE),
       index
     });
-    cur += chunkSize;
+    cur += CHUNK_SIZE;
     index++;
   }
   
@@ -338,14 +395,17 @@ const startUpload = async () => {
     
     // 计算文件MD5
     videoMD5.value = await calculateFileMD5(videoFile.value);
+    console.log('videoMd5', videoMD5.value); 
     
     // 创建分片
     const chunks = createFileChunks(videoFile.value);
     totalChunks.value = chunks.length;
     uploadQueue.value = chunks;
     
+    console.log('totalChunks', totalChunks.value);
+
     // 开始上传分片
-    uploadChunks();
+    await uploadChunks();
   } catch (error) {
     ElMessage.error('上传准备失败: ' + error);
     isUploading.value = false;
@@ -353,7 +413,7 @@ const startUpload = async () => {
 };
 
 // 上传分片
-const uploadChunks = async () => {
+const uploadChunks = async() => {
   if (uploadPaused.value) return;
   
   // 检查是否所有分片都已上传
@@ -374,12 +434,12 @@ const uploadChunks = async () => {
     
     if (!nextChunk) break;
     
-    uploadChunk(nextChunk);
+    await uploadChunk(nextChunk);
   }
 };
 
 // 上传单个分片
-const uploadChunk = async (chunkInfo: { chunk: Blob, index: number }) => {
+const uploadChunk = async(chunkInfo: { chunk: Blob, index: number }) => {
   if (!videoFile.value) return;
   
   try {
@@ -396,8 +456,7 @@ const uploadChunk = async (chunkInfo: { chunk: Blob, index: number }) => {
       chunkInfo.index, 
       videoMD5.value
     );
-    
-    console.log(response);
+    console.log("分片上传", response.data)
     
     // 上传成功
     uploadedChunks.value++;
@@ -410,7 +469,7 @@ const uploadChunk = async (chunkInfo: { chunk: Blob, index: number }) => {
     updateTotalProgress();
     
     // 继续上传其他分片
-    uploadChunks();
+    await uploadChunks();
   } catch (error: any) {
     if (error.name === 'AbortError') {
       // 上传被中止，不做处理
@@ -424,7 +483,7 @@ const uploadChunk = async (chunkInfo: { chunk: Blob, index: number }) => {
     currentUploads.value = currentUploads.value.filter(item => item.id !== Date.now() + chunkInfo.index);
     
     // 继续上传其他分片
-    uploadChunks();
+    await uploadChunks();
   }
 };
 
@@ -438,22 +497,29 @@ const mergeChunks = async () => {
   try {
     ElMessage.info('所有分片上传完成，正在合并文件...');
     
-    // 使用API方法合并分片
+    console.log('videoMd5', videoMD5.value); // 打印videoMD5 value
+    console.log('videoFile', videoFile.value); // 打印videoFile value
+    console.log('totalChunks', totalChunks.value); // 打印totalChunks value
+
+    // 获取视频类型
+    const videoType = videoFile.value?.name.split('.').pop() || 'mp4';
+    
+    // 使用API方法合并分片，添加videoType参数
     const response = await mergeVideoChunks(
       videoMD5.value,
-      videoFile.value?.name || '',
-      totalChunks.value
+      videoType,
+      videoFile.value?.name
     );
     
-    if (response.data.code === 0) {
+    if (response.status === 200) {
       ElMessage.success('视频上传成功！');
       isUploading.value = false;
       
-      // 保存视频信息，进入下一步
-      videoInfo.videoId = response.data.data.videoId;
+      // 保存视频MD5到视频信息中，作为唯一标识
+      videoInfo.md5 = videoMD5.value;
+      videoInfo.videoId = response.data.data.videoId || '';
+      
       goToNextStep();
-    } else {
-      throw new Error(response.data.message || '合并失败');
     }
   } catch (error: any) {
     ElMessage.error('文件合并失败: ' + (error.message || '未知错误'));
@@ -491,57 +557,6 @@ const cancelUpload = () => {
   
   ElMessage.info('上传已取消');
 };
-// 步骤控制
-const currentStep = ref(0);
-
-// 拖拽状态
-const isDragover = ref(false);
-
-// 视频文件
-const videoFile = ref<File | null>(null);
-const videoPreviewUrl = ref('');
-
-// 封面图片
-const coverUrl = ref('');
-const coverFile = ref<File | null>(null);
-
-// 标签输入控制
-const inputTagVisible = ref(false);
-const inputTagValue = ref('');
-
-// 视频信息表单
-const videoInfo = reactive({
-  videoId: '', // 添加videoId字段，用于存储上传成功后的视频ID
-  title: '',
-  category: '',
-  tags: [] as string[],
-  description: '',
-  privacy: 'public'
-});
-
-// 表单验证规则
-const rules = {
-  title: [
-    { required: true, message: '请输入视频标题', trigger: 'blur' },
-    { min: 5, max: 50, message: '标题长度在5到50个字符之间', trigger: 'blur' }
-  ],
-  category: [
-    { required: true, message: '请选择视频分类', trigger: 'change' }
-  ],
-  description: [
-    { max: 200, message: '简介不能超过200个字符', trigger: 'blur' }
-  ]
-};
-
-// 文件大小格式化
-const formatFileSize = (bytes: number) => {
-  if (bytes === 0) return '0 B';
-  const k = 1024;
-  const sizes = ['B', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return (bytes / Math.pow(k, i)).toFixed(2) + ' ' + sizes[i];
-};
-
 // 触发文件选择
 const triggerFileInput = () => {
   if (!videoFile.value) {
@@ -696,21 +711,24 @@ const goToPrevStep = () => {
   currentStep.value--;
 };
 
-// 提交视频
+// 🌟 提交视频
 const submitVideo = () => {
   videoForm.value?.validate(async (valid) => {
     if (valid) {
       try {
         ElMessage.info('正在提交视频信息...');
         
+        // 确保md5已设置
+        if (!videoInfo.md5) {
+          videoInfo.md5 = videoMD5.value;
+        }
+        
         // 使用API方法提交视频信息
         const response = await submitVideoInfo(videoInfo, coverFile.value);
         
-        if (response.data.code === 0) {
+        if (response.status === 200) {
           // 提交成功，进入下一步
           currentStep.value++;
-        } else {
-          throw new Error(response.data.message || '提交失败');
         }
       } catch (error: any) {
         ElMessage.error('视频信息提交失败: ' + (error.message || '未知错误'));
@@ -730,6 +748,7 @@ const uploadNewVideo = () => {
   removeVideo();
   removeCover();
   videoInfo.title = '';
+  videoInfo.md5 = '';
   videoInfo.category = '';
   videoInfo.tags = [];
   videoInfo.description = '';

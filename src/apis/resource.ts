@@ -13,7 +13,7 @@ export const listVideoResources = () => {
     });
   } else {
     // 使用真实数据
-    return axiosService.get(`${API_URL.URL_RESOURCE}`);
+    return axiosService.get(`${API_URL.URL_RESOURCE_ALL}`);
   }
 };
 

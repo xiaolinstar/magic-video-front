@@ -1,50 +1,86 @@
 
 import axiosService from '@/utils/request';
 import envConfig from '@/config/env';
+import { API_URL } from '@/common/constant/urls';
 
 /**
  * 上传视频分片
+ * POST /multimedia/video/chunk {chunkVideo, md5, chunkId, chunkMd5?}
  * @param chunk 分片数据
  * @param fileName 文件名
  * @param index 分片索引
  * @param fileHash 文件MD5值
+ * @param chunkMd5 分片MD5值（可选）
  */
-export const uploadVideoChunk = (chunk: Blob, fileName: string, index: number, fileHash: string) => {
-  const formData = new FormData();
-  formData.append('file', chunk, `${fileName}.part${index}`);
-  
-  return axiosService({
-    url: '/multimedia/video/chunk',
-    method: 'post',
-    data: formData,
-    headers: {
-      'Content-Type': 'multipart/form-data',
-      'File-Hash': fileHash,
-      'Chunk-Index': index.toString()
-    },
-    // 上传进度事件需要在axios实例之外处理
-    onUploadProgress: (progressEvent: any) => {
-      // 这里可以处理上传进度
+export const uploadVideoChunk = (chunk: Blob, fileName: string, index: number, 
+  fileHash: string, chunkMd5?: string) => {
+  if (envConfig.mockEnabled) {
+    return Promise.resolve({
+      status: 200,
+      data: {
+        message: '上传成功'
+      }
+    });
+  } else {
+    const formData = new FormData();
+    formData.append('chunkVideo', chunk, `${fileName}.part${index}`);
+    formData.append('md5', fileHash);
+    formData.append('chunkId', index.toString());
+    // 如果提供了分片MD5，也添加到formData中
+    if (chunkMd5) {
+      formData.append('chunkMd5', chunkMd5);
     }
-  });
+
+    return axiosService({
+      url: API_URL.URL_VIDEO_CHUNK,
+      method: 'post',
+      data: formData,
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      },
+      // 上传进度事件需要在axios实例之外处理
+      onUploadProgress: (progressEvent: any) => {
+        // 这里可以处理上传进度
+        console.log("上传进度...")
+      }
+    });
+  }
 };
 
 /**
  * 合并视频分片
  * @param md5 文件MD5值
- * @param filename 文件名
- * @param chunks 分片总数
+ * @param videoType 视频类型
+ * @param filename 文件名（可选）
  */
-export const mergeVideoChunks = (md5: string, filename: string, chunks: number) => {
-  return axiosService({
-    url: '/multimedia/video/merge',
-    method: 'post',
-    data: {
-      md5,
-      filename,
-      chunks
+export const mergeVideoChunks = (md5: string, videoType: string, filename?: string) => {
+  if (envConfig.mockEnabled) {
+    return Promise.resolve({
+      status: 200,
+      data: {
+        message: '合并成功'
+      }
+    });
+  } else {
+    const formData = new FormData();
+    formData.append('md5', md5);
+    formData.append('videoType', videoType);
+
+    if (filename) {
+      formData.append('filename', filename);
     }
-  });
+
+    console.log("合并视频分片...")
+
+    return axiosService({
+      url: API_URL.URL_VIDEO_MERGE,
+      method: 'post',
+      data: formData,
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+  }
 };
 
 /**
@@ -53,28 +89,42 @@ export const mergeVideoChunks = (md5: string, filename: string, chunks: number) 
  * @param coverFile 封面文件
  */
 export const submitVideoInfo = (videoInfo: any, coverFile: File | null) => {
-  const formData = new FormData();
-  
-  if (coverFile) {
-    formData.append('cover', coverFile);
-  }
-  
-  // 添加视频信息
-  formData.append('videoId', videoInfo.videoId);
-  formData.append('title', videoInfo.title);
-  formData.append('category', videoInfo.category);
-  formData.append('tags', JSON.stringify(videoInfo.tags));
-  formData.append('description', videoInfo.description);
-  formData.append('privacy', videoInfo.privacy);
-  
-  return axiosService({
-    url: '/api/videos',
-    method: 'post',
-    data: formData,
-    headers: {
-      'Content-Type': 'multipart/form-data'
+  if (envConfig.mockEnabled) {
+    return Promise.resolve({
+      status: 200,
+      data: {
+        message: '提交成功'
+      }
+    });
+  } else {
+    const formData = new FormData();
+
+    if (coverFile) {
+      formData.append('cover', coverFile);
     }
-  });
+
+    // 添加视频信息
+    formData.append('md5', videoInfo.md5); // 添加md5作为唯一标识
+    // videoId是后端生成的，如果已有值则传递，否则不传
+    if (videoInfo.videoId) {
+      formData.append('videoId', videoInfo.videoId);
+    }
+    formData.append('title', videoInfo.title);
+    formData.append('category', videoInfo.category);
+    formData.append('tags', JSON.stringify(videoInfo.tags));
+    formData.append('description', videoInfo.description);
+    formData.append('privacy', videoInfo.privacy);
+
+    return axiosService({
+      url: API_URL.URL_VIDEO,
+      method: 'post',
+      data: formData,
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+
+  }
 };
 
 // 导出配置中的分片大小，供组件使用

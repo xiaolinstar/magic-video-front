@@ -1,8 +1,9 @@
 import axios from 'axios';
 import envConfig from '@/config/env';
 
+
 const axiosService = axios.create({
-  baseURL: '/api',
+  baseURL: envConfig.baseUrl,
   timeout: envConfig.apiTimeout,
 });
 
