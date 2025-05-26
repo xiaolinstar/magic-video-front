@@ -7,6 +7,7 @@
 * [X]  使用docker-compose启动容器
 * [ ]  页面弹性化，自适应屏幕变化
 * [ ]  在 Carousel 视频的 videoId 与 列表中的 videoId 不一致，无法准确跳转。
+* [ ]  删除 vue-tsc --noEmit && vite build --mode production 构建指令
 
 ## 更新日志
 2025-03-29 模拟资源数据，前端界面展示不报错
