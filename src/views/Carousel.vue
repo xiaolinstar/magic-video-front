@@ -45,6 +45,7 @@ onMounted(async () => {
 });
 
 const navigateToVideo = (videoId: number) => {
+  console.log('跳转到视频详情页:', videoId);
   router.push({
     path: '/video',
     query: {id: videoId}

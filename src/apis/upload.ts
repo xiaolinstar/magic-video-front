@@ -86,9 +86,9 @@ export const mergeVideoChunks = (md5: string, videoType: string, filename?: stri
 /**
  * 提交视频信息
  * @param videoInfo 视频信息
- * @param coverFile 封面文件
+ * @param avatar 封面文件
  */
-export const submitVideoInfo = (videoInfo: any, coverFile: File | null) => {
+export const submitVideoInfo = (videoInfo: any, avatar: File | null) => {
   if (envConfig.mockEnabled) {
     return Promise.resolve({
       status: 200,
@@ -97,30 +97,24 @@ export const submitVideoInfo = (videoInfo: any, coverFile: File | null) => {
       }
     });
   } else {
-    const formData = new FormData();
+    const videoData = {
+      id: videoInfo.videoId,
+      md5: videoInfo.md5,
+      title: videoInfo.title,
+      category: videoInfo.category,
+      tags: videoInfo.tags,
+      description: videoInfo.description,
+      // privacy: videoInfo.privacy
+    };
 
-    if (coverFile) {
-      formData.append('cover', coverFile);
-    }
-
-    // 添加视频信息
-    formData.append('md5', videoInfo.md5); // 添加md5作为唯一标识
-    // videoId是后端生成的，如果已有值则传递，否则不传
-    if (videoInfo.videoId) {
-      formData.append('videoId', videoInfo.videoId);
-    }
-    formData.append('title', videoInfo.title);
-    formData.append('category', videoInfo.category);
-    formData.append('tags', JSON.stringify(videoInfo.tags));
-    formData.append('description', videoInfo.description);
-    formData.append('privacy', videoInfo.privacy);
+    
 
     return axiosService({
-      url: API_URL.URL_VIDEO,
+      url: API_URL.URL_RESOURCE,
       method: 'post',
-      data: formData,
+      data: videoData,
       headers: {
-        'Content-Type': 'multipart/form-data'
+        'Content-Type': 'application/json'
       }
     });
 
@@ -129,3 +123,14 @@ export const submitVideoInfo = (videoInfo: any, coverFile: File | null) => {
 
 // 导出配置中的分片大小，供组件使用
 export const chunkSize = envConfig.uploadChunkSize;
+
+
+/**
+ * 获取视频分类列表
+ */
+export const getVideoCategories = (): any => {
+  return axiosService({
+    url: API_URL.URL_CATEGORY,
+    method: 'get'
+  });
+};

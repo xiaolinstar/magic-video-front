@@ -11,7 +11,7 @@ export const API_URL = {
     URL_FEATURED: `/core/resource/featured`,  // 精选视频
     URL_BANNER: `/core/resource/banner`,  // 视频轮播图
     URL_CLASSIC: `/core/resource/classic`,
-
+    URL_CATEGORY: `/core/category/all`,
 
     URL_USER: '/core/user/list',
 
@@ -27,6 +27,7 @@ export const API_URL = {
     URL_VIDEO_MERGE: `/multimedia/video/merge`,
     URL_VIDEO_INFO: `/multimedia/video/info`,
     URL_VIDEO: `/multimedia/video`,
+
 
 }
 

@@ -115,18 +115,20 @@
             ></el-input>
           </el-form-item>
 
+          <!-- 在模板部分修改分类选择器 -->
           <el-form-item label="视频分类" prop="category">
             <el-select 
               v-model="videoInfo.category" 
               placeholder="请选择视频分类"
               style="width: 100%"
+              :loading="loadingCategories"
             >
-              <el-option label="娱乐" value="entertainment"></el-option>
-              <el-option label="游戏" value="game"></el-option>
-              <el-option label="音乐" value="music"></el-option>
-              <el-option label="教育" value="education"></el-option>
-              <el-option label="科技" value="technology"></el-option>
-              <el-option label="生活" value="life"></el-option>
+              <el-option 
+                v-for="item in categories" 
+                :key="item.value" 
+                :label="item.label" 
+                :value="item.value"
+              ></el-option>
             </el-select>
           </el-form-item>
 
@@ -236,13 +238,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onBeforeUnmount } from 'vue';
+import { ref, reactive, onBeforeUnmount, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { ElMessage, ElForm } from 'element-plus';
 import SparkMD5 from 'spark-md5';
 
-// 导入新的API方法
-import { uploadVideoChunk, mergeVideoChunks, submitVideoInfo } from '@/apis/upload';
+// 导入API方法
+import { uploadVideoChunk, mergeVideoChunks, submitVideoInfo, getVideoCategories } from '@/apis/upload';
 
 const router = useRouter();
 const fileInput = ref<HTMLInputElement | null>(null);
@@ -282,6 +284,9 @@ const currentUploads = ref<Array<{ id: number, controller: AbortController }>>([
 const maxConcurrentUploads = 3; // 最大并发上传数
 const videoMD5 = ref('');
 const uploadedChunkIds = ref<Set<number>>(new Set());
+
+const loadingCategories = ref(false);
+const categories = ref<Array<{ label: string, value: string }>>([]);
 
 // 视频信息表单
 const videoInfo = reactive({
@@ -497,7 +502,7 @@ const mergeChunks = async () => {
   try {
     ElMessage.info('所有分片上传完成，正在合并文件...');
     
-    console.log('videoMd5', videoMD5.value); // 打印videoMD5 value
+    console.log('videoMd5', videoMD5.value); // 打印videoMd5 value
     console.log('videoFile', videoFile.value); // 打印videoFile value
     console.log('totalChunks', totalChunks.value); // 打印totalChunks value
 
@@ -737,6 +742,27 @@ const submitVideo = () => {
   });
 };
 
+const fetchCategories = async () => {
+  try {
+    loadingCategories.value = true;
+    const response = await getVideoCategories();
+    console.log('response', response)
+
+    if (response.code === 200) {
+      categories.value = response.data.map((category: any) => ({
+        label: category.name,
+        value: category.name
+      }));
+    } else {
+      ElMessage.error('获取视频分类失败');
+    }
+  } catch (error: any) {
+    ElMessage.error('获取视频分类失败:'+ (error.message || '未知错误'));
+  } finally {
+    loadingCategories.value = false;
+  }
+};
+
 // 查看视频
 const goToVideoPage = () => {
   router.push('/video/1'); // 假设视频ID为1
@@ -755,6 +781,10 @@ const uploadNewVideo = () => {
   videoInfo.privacy = 'public';
   currentStep.value = 0;
 };
+onMounted(() => {
+  fetchCategories();
+})
+
 
 // 组件销毁前清理资源
 onBeforeUnmount(() => {

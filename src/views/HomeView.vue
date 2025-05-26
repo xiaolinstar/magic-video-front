@@ -29,7 +29,13 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { listVideoResources } from '@/apis/resource';
+import {
+  getClassicVideos,
+  getFeaturedVideos,
+  getLatestVideos,
+  getRecommendVideos,
+  listVideoResources
+} from '@/apis/resource';
 // 修正组件导入路径，使用绝对路径
 import Carousel from '@/views/Carousel.vue';
 import VideoList from '@/views/pages/VideoList.vue';
@@ -52,25 +58,36 @@ const classicVideos = ref<IVideo[]>([]);
 
 // 获取视频资源并更新数据
 onMounted(() => {
-  listVideoResources()
-    .then(response => {
-      const videos = response.data as IVideo[];
-      
-      // 确保视频数据有效
-      if (videos && videos.length > 0) {
-        // 分配视频到不同区域
-        // const totalVideos = videos.length;
-        // const videosPerSection = Math.floor(totalVideos / 3);
+  getRecommendVideos()
+      .then(response => {
+        const videos = response.data as IVideo[];
+        // 确保视频数据有效
+        if (videos && videos.length > 0) {
+          recommendedVideos.value = videos.slice();
+        }
+      })
+      .catch(error => console.log("拉取推荐视频失败，请联系管理员"));
 
-        // recommendedVideos.value = videos.slice(0, videosPerSection);
-        // latestVideos.value = videos.slice(videosPerSection, videosPerSection * 2);
-        // classicVideos.value = videos.slice(videosPerSection * 2);
-        recommendedVideos.value = videos.slice(0);
-        latestVideos.value = videos.slice();
-        classicVideos.value = videos.slice();
-      }
-    })
-    .catch(error => console.log("拉取视频资源失败，请联系管理员"));
+  getLatestVideos()
+      .then(response => {
+        const videos = response.data as IVideo[];
+        // 确保视频数据有效
+        if (videos && videos.length > 0) {
+          latestVideos.value = videos.slice();
+        }
+      })
+      .catch(error => console.log("拉取推荐视频失败，请联系管理员"));
+
+  getClassicVideos()
+      .then(response => {
+        const videos = response.data as IVideo[];
+        // 确保视频数据有效
+        if (videos && videos.length > 0) {
+          classicVideos.value = videos.slice();
+        }
+      })
+      .catch(error => console.log("拉取推荐视频失败，请联系管理员"));
+
 });
 </script>
 
