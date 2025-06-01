@@ -6,7 +6,7 @@ import 'element-plus/dist/index.css';
 import './assets/styles/main.css';
 import envConfig from '@/config/env';
 
-// 在开发环境且启用mock时引入mock服务
+// 启用 Mock服务，因为和 dash.js 冲突，所以暂时关闭
 // if (envConfig.mockEnabled) {
 //   import('./mock').then((mock) => {
 //     console.log('Mock服务已加载');

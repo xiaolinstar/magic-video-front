@@ -15,7 +15,7 @@
         <li><router-link to="/contact">联系我们</router-link></li>
       </ul>
       <div class="user-actions">
-        <button class="upload-btn" @click="goToUpload">
+        <button v-if="showUploadButton" class="upload-btn" @click="goToUpload">
           <i class="el-icon-upload2"></i> 投稿
         </button>
         <div class="auth-buttons">
@@ -33,6 +33,8 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const searchQuery = ref('');
+// 设置为false暂时关闭投稿按钮
+const showUploadButton = ref(false);
 
 const search = () => {
   if (searchQuery.value.trim()) {

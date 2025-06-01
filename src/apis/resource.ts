@@ -2,7 +2,7 @@ import axiosService from '@/utils/request';
 import { API_URL } from '@/common/constant/urls';
 import envConfig from '@/config/env';
 import { mockResources } from '@/mock/MockResource';
-import { mockFeaturedVideos } from '@/mock/MockFeatured';
+import { mockPopularVideos } from '@/mock/MockPopular';
 
 // 获取视频资源列表
 export const listVideoResources = () => {
@@ -50,17 +50,17 @@ export const getClassicVideos = () => {
   }
 }
 
-// 获取精选视频数据
-export const getFeaturedVideos = () => {
+
+// 获取热门视频数据
+export const getPopularVideos = () => {
   if (envConfig.mockEnabled) {
     // 开发环境下使用 mock 数据
     return Promise.resolve({
-      data: mockFeaturedVideos
+      data: mockPopularVideos
     });
-    // return axiosService.get('/featured');
   } else {
     // 生产环境下使用真实数据
-    return axiosService.get(`${API_URL.URL_FEATURED}`);
+    return axiosService.get(`${API_URL.URL_POPULAR}`);
   }
 };
 

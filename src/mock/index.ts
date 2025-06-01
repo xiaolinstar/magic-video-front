@@ -1,7 +1,10 @@
+// mockjs 启用开关在 main.ts 中控制，暂时关闭
+
+
 import Mock from 'mockjs';
 import envConfig from '@/config/env';
 import { mockResources } from '@/mock/MockResource';
-import { mockFeaturedVideos } from './MockFeatured';
+import { mockPopularVideos } from '@/mock/MockPopular';
 
 // 无法使用 Mock 拦截，会导致 dashjs 无法正常使用
 
@@ -16,12 +19,11 @@ Mock.mock(`${envConfig.baseUrl}/resources`, 'get', {
     data: mockResources
 });
 
-Mock.mock(`${envConfig.baseUrl}/featured`, 'get', {
+Mock.mock(`${envConfig.baseUrl}/popular`, 'get', {
     code: 0,
     message: 'success',
-    data: mockFeaturedVideos
-})
-
+    data: mockPopularVideos
+});
 
 console.log('Mock服务已启动');
 

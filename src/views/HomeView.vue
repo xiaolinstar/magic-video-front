@@ -6,24 +6,20 @@
     <!-- 视频推荐列表 -->
     <div class="video-section">
       <h2>推荐视频</h2>
-      <VideoList :videos="recommendedVideos" />
+      <VideoList :videos="recommendedVideos" :maxRows="3" :showTypeTag="false" />
     </div>
-
 
     <!-- 新剧展示 -->
     <div class="video-section">
       <h2>新剧上映</h2>
-      <VideoList :videos="latestVideos" />
+      <VideoList :videos="latestVideos" :maxRows="2" :showTypeTag="true" />
     </div>
 
     <!-- 经典好剧展示 -->
     <div class="video-section">
       <h2>经典好剧</h2>
-      <VideoList :videos="classicVideos" />
+      <VideoList :videos="classicVideos" :maxRows="2" :showTypeTag="true"/>
     </div>
-
-    <!-- 精选视频 -->
-    <FeaturedSection />    
   </div>
 </template>
 
@@ -31,26 +27,13 @@
 import { ref, onMounted } from 'vue';
 import {
   getClassicVideos,
-  getFeaturedVideos,
   getLatestVideos,
   getRecommendVideos,
-  listVideoResources
 } from '@/apis/resource';
 // 修正组件导入路径，使用绝对路径
 import Carousel from '@/views/Carousel.vue';
 import VideoList from '@/views/pages/VideoList.vue';
-import CategorySection from '@/views/CategorySection.vue';
-import FeaturedSection from '@/views/FeaturedSection.vue';
-
-interface IVideo {
-  mp4: string;  // mp4资源地址
-  m3u8: string; // hls资源地址
-  mpd: string;  // dash资源地址
-  name: string; // 资源名称
-  title: string; // 资源标题
-  description: string; // 资源描述
-  avatar: string; // 资源封面图
-}
+import type { IVideo } from '@/common/types/video';
 
 const recommendedVideos = ref<IVideo[]>([]);
 const latestVideos = ref<IVideo[]>([]);
@@ -60,34 +43,21 @@ const classicVideos = ref<IVideo[]>([]);
 onMounted(() => {
   getRecommendVideos()
       .then(response => {
-        const videos = response.data as IVideo[];
-        // 确保视频数据有效
-        if (videos && videos.length > 0) {
-          recommendedVideos.value = videos.slice();
-        }
+        recommendedVideos.value = response.data;
       })
-      .catch(error => console.log("拉取推荐视频失败，请联系管理员"));
+      .catch(error => console.log("获取推荐视频失败"));
 
   getLatestVideos()
       .then(response => {
-        const videos = response.data as IVideo[];
-        // 确保视频数据有效
-        if (videos && videos.length > 0) {
-          latestVideos.value = videos.slice();
-        }
+        latestVideos.value = response.data;
       })
-      .catch(error => console.log("拉取推荐视频失败，请联系管理员"));
+      .catch(error => console.log("获取最新视频失败"));
 
   getClassicVideos()
       .then(response => {
-        const videos = response.data as IVideo[];
-        // 确保视频数据有效
-        if (videos && videos.length > 0) {
-          classicVideos.value = videos.slice();
-        }
+        classicVideos.value = response.data;
       })
-      .catch(error => console.log("拉取推荐视频失败，请联系管理员"));
-
+      .catch(error => console.log("获取经典视频失败"));
 });
 </script>
 
@@ -101,29 +71,46 @@ onMounted(() => {
 }
 
 .video-section {
-  margin-bottom: 30px;
-  padding: 0 20px; /* 添加左右内边距，保持内容与边缘有一定距离 */
+  margin: 40px 0;
+  padding: 0 20px;
 }
 
 .video-section h2 {
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid #4CAF50;
   font-size: 24px;
-  font-weight: 600;
+  font-weight: bold;
+  margin-bottom: 20px;
   color: #333;
+  position: relative;
+  padding-left: 15px;
 }
 
-/* 添加响应式设计 */
-@media (max-width: 768px) {
-  .video-section {
-    padding: 0 10px;
-    margin-bottom: 20px;
-  }
-  
-  .video-section h2 {
-    font-size: 20px;
-    margin-bottom: 15px;
-  }
+.video-section h2::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 20px;
+  background-color: #00a1d6;
+  border-radius: 2px;
+}
+
+/* 分类标签样式 */
+.category-tabs {
+  margin: 20px 20px 0;
+}
+
+:deep(.el-tabs__item) {
+  font-size: 16px;
+  padding: 0 20px;
+}
+
+:deep(.el-tabs__active-bar) {
+  background-color: #00a1d6;
+}
+
+:deep(.el-tabs__item.is-active) {
+  color: #00a1d6;
 }
 </style>@/apis/resource

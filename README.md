@@ -2,12 +2,13 @@
 
 ## 待办Todos
 
-* [ ]  使用云服务器部署或者Docker部署，支撑 CI/CD
+* [ ]  使用云服务器部署或者 Docker 部署，支持 CI/CD
 * [X]  文档完善
-* [X]  使用docker-compose启动容器
-* [ ]  页面弹性化，自适应屏幕变化
+* [X]  使用 docker-compose 启动容器
+* [X]  页面弹性化，自适应屏幕变化
 * [ ]  在 Carousel 视频的 videoId 与 列表中的 videoId 不一致，无法准确跳转。
 * [ ]  删除 vue-tsc --noEmit && vite build --mode production 构建指令
+* [ ]  阿里云 腾讯云 本地媒体转码服务对比
 
 ## 更新日志
 2025-03-29 模拟资源数据，前端界面展示不报错

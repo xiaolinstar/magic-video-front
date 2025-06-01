@@ -10,7 +10,7 @@
           </router-link>
         </li>
         <li class="nav-item">
-          <router-link to="/hot" class="nav-link">
+          <router-link to="/popular" class="nav-link">
             <i class="el-icon-s-opportunity"></i>
             <span class="nav-text">热门</span>
           </router-link>
@@ -77,6 +77,8 @@
   height: 100%;
   padding: 20px 0;
   overflow-y: auto;
+  /* 删除width: 100%设置，使用App.vue中定义的宽度 */
+  box-sizing: border-box;
 }
 
 .nav-section {

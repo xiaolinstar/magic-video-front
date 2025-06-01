@@ -32,15 +32,28 @@ const route = useRoute();
   flex: 1;
   max-width: 100%;
   width: 100%;
+  position: relative;
+}
+
+.side-navigation {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  background-color: #fff;
+  z-index: 100;
+  width: 200px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .main-content {
   flex: 1;
-  max-width: 100%; /* 增加最大宽度 */
-  width: 100%; /* 占据全部宽度 */
+  max-width: calc(100% - 200px);
+  width: calc(100% - 200px);
   padding: 0px 0px 0px 30px;
   box-sizing: border-box;
-  margin: 0 auto; /* 居中显示 */
+  margin: 0 auto;
+  overflow-y: auto;
 }
 
 .main-content.no-padding {
@@ -49,12 +62,18 @@ const route = useRoute();
   max-width: 100%;
 }
 
+.full-width .main-content {
+  max-width: 100%;
+  width: 100%;
+}
+
 /* 全局样式 */
 body {
   margin: 0;
   padding: 0;
   font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
   background-color: #f8f9fa;
+  overflow-x: hidden;
 }
 
 a {
@@ -63,9 +82,14 @@ a {
 }
 
 @media (max-width: 768px) {
+  .side-navigation {
+    width: 60px;
+  }
+  
   .main-content {
+    max-width: calc(100% - 60px);
+    width: calc(100% - 60px);
     padding: 0 15px;
-    max-width: 95%;
   }
 }
 </style>

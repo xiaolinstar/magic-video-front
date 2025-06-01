@@ -1,19 +1,9 @@
 <script setup lang="ts">
-import { onMounted, reactive, watch, ref, onUnmounted } from 'vue';
+import { onMounted, reactive, watch, ref, onUnmounted, computed } from 'vue';
 import dashjs from 'dashjs';
 import { listVideoResources } from '@/apis/resource';
 import { useRoute, useRouter } from 'vue-router';
-
-interface IVideo {
-  id: number;
-  mp4: string;  // mp4资源地址
-  m3u8: string; // hls资源地址
-  mpd: string;  // dash资源地址
-  name: string; // 资源名称
-  title: string; // 资源标题
-  description: string; // 资源描述
-  avatar: string; // 资源封面图
-}
+import type { IVideo } from '@/common/types/video';
 
 const dashVideoRef = ref()
 const route = useRoute()
@@ -27,6 +17,37 @@ const form = reactive({
   id: 0,
   videos: [] as IVideo[]
 })
+
+// 获取当前播放的视频
+const currentVideo = computed(() => {
+  if (form.videos.length > 0 && form.id >= 0 && form.id < form.videos.length) {
+    return form.videos[form.id];
+  }
+  return null;
+});
+
+// 获取视频类型的中文描述
+const getVideoTypeText = (type: 'movie' | 'tvshow' | 'video') => {
+  switch (type) {
+    case 'movie': return '电影';
+    case 'tvshow': return '电视剧';
+    case 'video': return '视频资源';
+    default: return '未知类型';
+  }
+};
+
+// 根据ID获取相关电影信息
+const getRelatedMovieById = (id: number) => {
+  return form.videos.find(video => video.id === id);
+};
+
+// 播放相关电影
+const playRelatedMovie = (id: number) => {
+  const index = form.videos.findIndex(video => video.id === id);
+  if (index !== -1) {
+    form.id = index;
+  }
+};
 
 const updateVideo = async() => {
   if (form.videos.length === 0 || !form.videos[form.id]) return;
@@ -75,8 +96,10 @@ onMounted(() => {
         let videoId = route.query.id as string;
         if (videoId && !isNaN(Number(videoId))) {
           let id = Number(videoId);
-          if (id >= 0 && id < form.videos.length) {
-            form.id = id;
+          // 查找ID匹配的视频
+          const videoIndex = form.videos.findIndex(video => video.id === id);
+          if (videoIndex !== -1) {
+            form.id = videoIndex;
           }
         }
         updateVideo();
@@ -109,8 +132,12 @@ onUnmounted(() => {
       <!-- 视频信息区域 -->
       <div class="video-info-container" v-if="form.videos.length > 0 && form.videos[form.id]">
         <div class="video-stats">
-          <span class="play-count"><i class="el-icon-video-play"></i> 播放量: 10.2万</span>
+          <span class="play-count">
+            <i class="el-icon-video-play"></i> 
+            播放量: 10.2万
+          </span>
           <span class="publish-date">发布时间: 2023-05-15</span>
+          <span class="video-type">类型: {{ getVideoTypeText(form.videos[form.id].type) }}</span>
         </div>
         <div class="video-description">
           {{ form.videos[form.id].description }}
@@ -118,29 +145,73 @@ onUnmounted(() => {
       </div>
     </div>
     
-    <!-- 推荐视频列表 -->
-    <div class="recommended-videos">
-      <h2 class="section-title">相关推荐</h2>
-      <el-scrollbar height="calc(100vh - 100px)" class="video-list-scrollbar">
-        <div class="video-list">
-          <div 
-            v-for="(video, index) in form.videos" 
-            :key="index"
-            class="recommended-video-item"
-            :class="{ active: form.id === index }"
-            @click="form.id = index"
-          >
-            <div class="video-avatar-container">
-              <el-image :src="video.avatar" fit="cover" class="video-avatar" />
-              <div class="play-icon"><i class="el-icon-video-play"></i></div>
-            </div>
-            <div class="video-details">
-              <h3 class="video-item-title">{{ video.title }}</h3>
-              <p class="video-item-desc">{{ video.description }}</p>
+    <!-- 根据视频类型显示不同的侧边栏内容 -->
+    <div class="sidebar-content">
+      <!-- 电视剧：显示剧集信息 -->
+      <div v-if="currentVideo && currentVideo.type === 'tvshow' && currentVideo.episodes" class="episode-list">
+        <h2 class="section-title">剧集信息</h2>
+        <el-scrollbar height="calc(100vh - 100px)" class="episode-list-scrollbar">
+          <div class="episode-item" 
+               v-for="episode in currentVideo.episodes" 
+               :key="`${episode.season}-${episode.episode}`">
+            <div class="episode-number">S{{ episode.season }}E{{ episode.episode }}</div>
+            <div class="episode-details">
+              <h3 class="episode-title">{{ episode.title }}</h3>
+              <span class="episode-duration">{{ episode.duration }}</span>
             </div>
           </div>
-        </div>
-      </el-scrollbar>
+        </el-scrollbar>
+      </div>
+      
+      <!-- 电影：显示相关推荐电影 -->
+      <div v-else-if="currentVideo && currentVideo.type === 'movie'" class="related-movies">
+        <h2 class="section-title">相关推荐</h2>
+        <el-scrollbar height="calc(100vh - 100px)" class="video-list-scrollbar">
+          <div class="video-list">
+            <div 
+              v-for="relatedId in currentVideo.relatedMovies"
+              :key="relatedId"
+              class="recommended-video-item"
+              @click="playRelatedMovie(relatedId)"
+            >
+              <div class="video-avatar-container">
+                <el-image :src="getRelatedMovieById(relatedId)?.avatar" fit="cover" class="video-avatar" />
+                <div class="play-icon"><i class="el-icon-video-play"></i></div>
+              </div>
+              <div class="video-details">
+                <h3 class="video-item-title">{{ getRelatedMovieById(relatedId)?.title }}</h3>
+                <!-- 移除下面这行 -->
+                <!-- <p class="video-item-desc">{{ form.videos.find(video => video.id === relatedId)?.description }}</p> -->
+              </div>
+            </div>
+          </div>
+        </el-scrollbar>
+      </div>
+      
+      <!-- 视频资源：显示所有视频列表 -->
+      <div v-else class="recommended-videos">
+        <h2 class="section-title">所有视频</h2>
+        <el-scrollbar height="calc(100vh - 100px)" class="video-list-scrollbar">
+          <div class="video-list">
+            <div 
+              v-for="(video, index) in form.videos" 
+              :key="index"
+              class="recommended-video-item"
+              :class="{ active: form.id === index }"
+              @click="form.id = index"
+            >
+              <div class="video-avatar-container">
+                <el-image :src="video.avatar" fit="cover" class="video-avatar" />
+                <div class="play-icon"><i class="el-icon-video-play"></i></div>
+              </div>
+              <div class="video-details">
+                <h3 class="video-item-title">{{ video.title }}</h3>
+                <p class="video-item-desc">{{ video.description }}</p>
+              </div>
+            </div>
+          </div>
+        </el-scrollbar>
+      </div>
     </div>
   </div>
 </template>
@@ -446,4 +517,3 @@ onUnmounted(() => {
   }
 }
 </style>
-@/apis/resource

@@ -8,9 +8,9 @@ export const API_URL = {
     URL_RESOURCE_ALL: `/core/resource/all`,
     URL_RECOMMEND: `/core/resource/recommend`,
     URL_LATEST: `/core/resource/latest`,
-    URL_FEATURED: `/core/resource/featured`,  // 精选视频
     URL_BANNER: `/core/resource/banner`,  // 视频轮播图
     URL_CLASSIC: `/core/resource/classic`,
+    URL_POPULAR: `/core/resource/popular`,  // 热门视频
     URL_CATEGORY: `/core/category/all`,
 
     URL_USER: '/core/user/list',
