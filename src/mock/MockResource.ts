@@ -41,7 +41,7 @@ export const mockVideoResources: IVideoResource[] = [
   },
   // 剧集资源 - 性爱自修室
   {
-    id: 2212314,
+    id: 200111,
     title: 'Sex Education: Otis & Ruby',
     description: '欧提思（阿萨·巴特菲尔德 Asa Butterfield 饰）是一位非常平凡的高中生，他既没有特别聪明，也没有特别英俊，要说他和同龄人唯一的不同，那就是他拥有一位研究性心理学的母亲简（吉莲·安德森 Gillian Anderson 饰）。',
     coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/Otis%26Ruby.jpg',
@@ -49,6 +49,17 @@ export const mockVideoResources: IVideoResource[] = [
     duration: 3120, // 52分钟
     seasonNumber: 1,
     episodeNumber: 1,
+    collectionId: 2001
+  },
+  {
+    id: 200112,
+    title: 'Sex Education: Otis & Ruby',
+    description: '欧提思（阿萨·巴特菲尔德 Asa Butterfield 饰）是一位非常平凡的高中生，他既没有特别聪明，也没有特别英俊，要说他和同龄人唯一的不同，那就是他拥有一位研究性心理学的母亲简（吉莲·安德森 Gillian Anderson 饰）。',
+    coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/Otis%26Ruby.jpg',
+    type: 'episode',
+    duration: 3120, // 52分钟
+    seasonNumber: 1,
+    episodeNumber: 2,
     collectionId: 2001
   },
   // 寂静之海剧集
@@ -64,7 +75,7 @@ export const mockVideoResources: IVideoResource[] = [
     collectionId: 3001
   },
   {
-    id: 3001002,
+    id: 300112,
     title: '寂静之海 第2集',
     description: '团队抵达月球基地，发现基地内发生了不明原因的事故，所有研究人员都已死亡。',
     coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/SeaLuna.jpg',
@@ -72,6 +83,28 @@ export const mockVideoResources: IVideoResource[] = [
     duration: 3480, // 58分钟
     seasonNumber: 1,
     episodeNumber: 2,
+    collectionId: 3001
+  },
+  {
+    id: 300113,
+    title: '寂静之海 第3集',
+    description: '团队抵达月球基地，发现基地内发生了不明原因的事故，所有研究人员都已死亡。',
+    coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/SeaLuna.jpg',
+    type: 'episode',
+    duration: 3480, // 58分钟
+    seasonNumber: 1,
+    episodeNumber: 3,
+    collectionId: 3001
+  },
+  {
+    id: 300114,
+    title: '寂静之海 第4集',
+    description: '团队抵达月球基地，发现基地内发生了不明原因的事故，所有研究人员都已死亡。',
+    coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/SeaLuna.jpg',
+    type: 'episode',
+    duration: 3480, // 58分钟
+    seasonNumber: 1,
+    episodeNumber: 4,
     collectionId: 3001
   },
   // 甜蜜家园剧集
@@ -122,10 +155,10 @@ export const mockVideoResources: IVideoResource[] = [
   },
   // 弥留之国的爱丽丝剧集
   {
-    id: 6001001,
+    id: 600111,
     title: '弥留之国的爱丽丝 第1集',
     description: '有栖良平（山崎贤人 饰）拥有一位非常优秀的哥哥，在哥哥的衬托之下，毫无建树的他显得更加的废柴。',
-    coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/last-guys.jpg',
+    coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/alice-poke.jpg',
     type: 'episode',
     duration: 3000, // 50分钟
     seasonNumber: 1,
@@ -133,10 +166,10 @@ export const mockVideoResources: IVideoResource[] = [
     collectionId: 6001
   },
   {
-    id: 6001002,
+    id: 600112,
     title: '弥留之国的爱丽丝 第2集',
     description: '良平和朋友们发现自己被困在一个神秘的平行世界中，必须参加各种死亡游戏才能生存。',
-    coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/last-guys.jpg',
+    coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/alice-poke.jpg',
     type: 'episode',
     duration: 2940, // 49分钟
     seasonNumber: 1,
@@ -231,7 +264,7 @@ export const mockCollections: ICollection[] = [
     title: '弥留之国的爱丽丝',
     type: 'tv-series',
     description: '日本科幻悬疑剧集，改编自同名漫画',
-    coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/last-guys.jpg',
+    coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/alice-poke.jpg',
     releaseYear: 2020,
     items: [
       { type: 'season', seasonId: 60011, order: 1, title: '第一季' }
@@ -272,7 +305,7 @@ export const mockSeasons: ISeason[] = [
     id: 30011,
     collectionId: 3001,
     seasonNumber: 1,
-    title: '第一季',
+    title: '寂静之海 第一季',
     description: '月球基地的神秘事件调查',
     coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/silent-sea.jpg',
     releaseDate: '2021-12-24',
@@ -292,6 +325,22 @@ export const mockSeasons: ISeason[] = [
         title: '第二集',
         duration: 3480, // 58分钟
         plot: '团队抵达月球基地，发现基地内发生了不明原因的事故'
+      },
+      {
+        id: 300113,
+        seasonId: 30011,
+        episodeNumber: 3,
+        title: '第三集',
+        duration: 3480, // 58分钟
+        plot: '团队抵达月球基地，进行调查'
+      },
+      {
+        id: 300114,
+        seasonId: 30011,
+        episodeNumber: 4,
+        title: '第四集',
+        duration: 3458, 
+        plot: '团队抵达月球基地，进行调查'
       }
     ]
   },
@@ -403,7 +452,18 @@ export const mockPlaybackSources: IPlaybackSource[] = [
     ]
   },
   {
-    videoId: 2212314,
+    videoId: 200111,
+    sources: [
+      {
+        src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/Md5-Otis-Ruby/Md5-Otis-Ruby.mpd',
+        type: 'dash',
+        resolution: '1080p',
+        bitrate: 4500
+      }
+    ]
+  },
+  {
+    videoId: 200112,
     sources: [
       {
         src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/Md5-Otis-Ruby/Md5-Otis-Ruby.mpd',
@@ -451,6 +511,50 @@ export const mockPlaybackSources: IPlaybackSource[] = [
     sources: [
       {
         src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/TheSilentSea/01/main.mpd',
+        type: 'dash',
+        resolution: '1080p',
+        bitrate: 4400
+      }
+    ]
+  },
+  {
+    videoId: 300112,
+    sources: [
+      {
+        src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/TheSilentSea/02/main.mpd',
+        type: 'dash',
+        resolution: '1080p',
+        bitrate: 4400
+      }
+    ]
+  },
+  {
+    videoId: 300113,
+    sources: [
+      {
+        src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/TheSilentSea/03/main.mpd',
+        type: 'dash',
+        resolution: '1080p',
+        bitrate: 4400
+      }
+    ]
+  },
+  {
+    videoId: 300114,
+    sources: [
+      {
+        src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/TheSilentSea/04/main.mpd',
+        type: 'dash',
+        resolution: '1080p',
+        bitrate: 4400
+      }
+    ]
+  },
+  {
+    videoId: 600111,
+    sources: [
+      {
+        src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/Alice/01/main.mpd',
         type: 'dash',
         resolution: '1080p',
         bitrate: 4400
