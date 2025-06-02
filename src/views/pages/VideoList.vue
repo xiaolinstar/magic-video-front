@@ -1,71 +1,126 @@
 <template>
-  <div class="video-list-container limited-rows">
-    <div class="video-card" v-for="(video, index) in displayedVideos" :key="video.name">
-      <!-- 添加视频类型标签，根据 showTypeTag 配置控制显示 -->
-      <div class="video-type-tag" v-if="showTypeTag && video.type">
-        {{ getVideoTypeText(video.type) }}
+  <div class="video-list-container">
+    <div 
+      v-for="collection in displayedCollections" 
+      :key="collection.id" 
+      class="video-card"
+      @click="playCollection(collection)"
+    >
+      <div class="video-cover-wrapper">
+        <img :src="collection.coverImage" :alt="collection.title" class="video-cover" />
+        <div class="play-icon-overlay">
+          <i class="play-icon">▶</i>
+        </div>
+        <div v-if="showTypeTag" class="video-type-tag">
+          {{ getCollectionTypeText(collection.type) }}
+        </div>
+        <div v-if="collection.releaseYear" class="year-tag">
+          {{ collection.releaseYear }}
+        </div>
       </div>
-      
-      <router-link :to="`/video?id=${video.id}`" class="video-link">
-        <div class="video-cover-wrapper">
-          <el-image :src="video.avatar" fit="cover" class="video-cover" />
-          <div class="video-duration">05:23</div>
-          <div class="play-icon-overlay">
-            <i class="el-icon-video-play"></i>
-          </div>
+      <div class="video-info">
+        <h3 class="video-title">{{ collection.title }}</h3>
+        <p class="video-description">{{ collection.description }}</p>
+        <div class="video-meta">
+          <span class="video-type">{{ getCollectionTypeText(collection.type) }}</span>
+          <span v-if="collection.releaseYear" class="video-rating">{{ collection.releaseYear }}</span>
         </div>
-        <div class="video-info">
-          <h3 class="video-title" :title="video.title">{{ video.title }}</h3>
-          <div class="video-meta">
-            <span class="play-count"><i class="el-icon-view"></i>8.2万</span>
-            <span class="danmaku-count"><i class="el-icon-chat-dot-round"></i>1024</span>
-            <!-- 添加视频类型显示，根据 showTypeTag 配置控制显示 -->
-            <span class="video-type" v-if="showTypeTag && video.type">{{ getVideoTypeText(video.type) }}</span>
-          </div>
-        </div>
-      </router-link>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onUnmounted } from 'vue';
-import type { IVideo } from '@/common/types/video';
+import { useRouter } from 'vue-router';
+import type { ICollection } from '@/common/types/video';
 
-const props = defineProps({
-  videos: {
-    type: Array as () => IVideo[],
-    required: true
-  },
-  maxRows: {
-    type: Number,
-    default: 3
-  },
-  // 添加新的配置属性，控制是否显示视频类型标签
-  showTypeTag: {
-    type: Boolean,
-    default: true // 默认显示类型标签，保持向后兼容
-  }
+interface Props {
+  collections: ICollection[];
+  maxRows?: number;
+  showTypeTag?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  maxRows: 3,
+  showTypeTag: true
 });
 
+const router = useRouter();
+const itemsPerRow = ref(5); // 根据屏幕大小估算每行显示的视频数量
+
+// 计算显示的集合数量
+const displayedCollections = computed(() => {
+  const maxItems = props.maxRows * itemsPerRow.value;
+  return props.collections.slice(0, maxItems);
+});
+
+// 格式化时长（秒转换为时分秒）
+const formatDuration = (seconds: number): string => {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+  
+  if (hours > 0) {
+    return `${hours}:${minutes < 10 ? '0' + minutes : minutes}:${remainingSeconds < 10 ? '0' + remainingSeconds : remainingSeconds}`;
+  } else {
+    return `${minutes}:${remainingSeconds < 10 ? '0' + remainingSeconds : remainingSeconds}`;
+  }
+};
+
+// 获取集合类型文本
+const getCollectionTypeText = (type: string): string => {
+  switch (type) {
+    case 'movie-series':
+      return '电影';
+    case 'tv-series':
+      return '剧集';
+    default:
+      return '视频';
+  }
+};
+
 // 获取视频类型的中文描述
-const getVideoTypeText = (type: string) => {
+const getVideoTypeText = (type: 'movie' | 'episode' | 'clip') => {
   switch (type) {
     case 'movie': return '电影';
-    case 'tvshow': return '电视剧';
-    case 'video': return '视频';
+    case 'episode': return '剧集';
+    case 'clip': return '片段';
     default: return '';
   }
 };
 
-const itemsPerRow = ref(5); // 根据屏幕大小估算每行显示的视频数量
-
-// 计算当前应该显示的视频
-const displayedVideos = computed(() => {
-  // 限制显示的视频数量，根据行数计算
-  const maxItems = props.maxRows * itemsPerRow.value;
-  return props.videos.slice(0, maxItems);
-});
+// 点击集合，跳转到第一个视频（第一季第一集）
+const playCollection = (collection: ICollection) => {
+  if (collection.items && collection.items.length > 0) {
+    const firstItem = collection.items[0];
+    let resourceId: number;
+    
+    if (firstItem.type === 'movie') {
+      // 电影系列：直接跳转到第一部电影
+      resourceId = firstItem.movieId;
+    } else if (firstItem.type === 'season') {
+      // 剧集系列：跳转到第一季第一集
+      const seasonId = firstItem.seasonId;
+      
+      // 根据seasonId构造第一集的ID
+      // 从mock数据可以看出，第一集的ID规律是：seasonId * 10 + 1
+      // 例如：seasonId 20011 -> 第一集ID 200111
+      //      seasonId 30011 -> 第一集ID 300111
+      resourceId = seasonId * 10 + 1;
+    } else {
+      console.warn('未知的项目类型:', (firstItem as any).type);
+      return;
+    }
+    console.log('collection:', collection); // 打印collection，用于调试
+    console.log('resourceId:', resourceId); // 打印resourceId，用于调试
+    
+    router.push({
+      name: 'video',
+      query: { id: resourceId }
+    });
+  }
+};
 
 // 监听窗口大小变化，调整每行显示的视频数量
 const updateItemsPerRow = () => {
@@ -110,20 +165,12 @@ onUnmounted(() => {
   height: 100%;
   display: flex;
   flex-direction: column;
+  cursor: pointer;
 }
 
 .video-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-/* 视频链接 */
-.video-link {
-  text-decoration: none;
-  color: inherit;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
 }
 
 /* 视频封面包装器 */
@@ -144,18 +191,6 @@ onUnmounted(() => {
   object-fit: cover;
 }
 
-/* 视频时长 */
-.video-duration {
-  position: absolute;
-  bottom: 8px;
-  right: 8px;
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 1px 6px;
-  border-radius: 4px;
-  font-size: 12px;
-}
-
 /* 播放图标覆盖层 */
 .play-icon-overlay {
   position: absolute;
@@ -171,14 +206,40 @@ onUnmounted(() => {
   transition: opacity 0.3s ease, background-color 0.3s ease;
 }
 
-.play-icon-overlay i {
+.play-icon {
   font-size: 48px;
   color: white;
+  font-style: normal;
 }
 
 .video-cover-wrapper:hover .play-icon-overlay {
   opacity: 1;
   background-color: rgba(0, 0, 0, 0.3);
+}
+
+/* 视频类型标签 */
+.video-type-tag {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(0, 161, 214, 0.8);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  z-index: 2;
+}
+
+/* 年份标签 */
+.year-tag {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 12px;
 }
 
 /* 视频信息 */
@@ -204,44 +265,40 @@ onUnmounted(() => {
   height: 2.8em; /* 固定高度为两行 */
 }
 
+/* 视频描述 */
+.video-description {
+  font-size: 13px;
+  color: #666;
+  margin: 0 0 8px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+  flex-grow: 1;
+}
+
 /* 视频元数据 */
 .video-meta {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
+  justify-content: space-between;
   font-size: 13px;
   color: #999;
   margin-top: auto;
 }
 
-.play-count, .danmaku-count {
-  display: flex;
-  align-items: center;
-  margin-right: 12px;
-}
-
-.play-count i, .danmaku-count i {
-  margin-right: 4px;
-  font-size: 14px;
-}
-
-/* 视频类型标签 */
-.video-type-tag {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: rgba(0, 161, 214, 0.8);
-  color: white;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  z-index: 2;
-}
-
 .video-type {
-  margin-left: auto;
   color: #00a1d6;
   font-size: 12px;
+}
+
+/* 视频评分 */
+.video-rating {
+  color: #ff6b35;
+  font-size: 12px;
+  font-weight: 500;
 }
 
 /* 响应式调整 */

@@ -1,15 +1,15 @@
 import axiosService from '@/utils/request';
 import { API_URL } from '@/common/constant/urls';
 import envConfig from '@/config/env';
-import { mockResources } from '@/mock/MockResource';
+import { mockCollections, mockVideoResources } from '@/mock/MockResource';
 import { mockPopularVideos } from '@/mock/MockPopular';
 
 // 获取视频资源列表
-export const listVideoResources = () => {
+export const listResources = () => {
   if (envConfig.mockEnabled) {
     // 使用mock数据
     return Promise.resolve({
-      data: mockResources
+      data: mockVideoResources
     });
   } else {
     // 使用真实数据
@@ -21,7 +21,7 @@ export const listVideoResources = () => {
 export const getRecommendVideos = () => {
   if (envConfig.mockEnabled) {
     return Promise.resolve({
-      data: mockResources
+      data: mockCollections
     });
   } else {
     return axiosService.get(`${API_URL.URL_RECOMMEND}`);
@@ -32,7 +32,7 @@ export const getRecommendVideos = () => {
 export const getLatestVideos = () => {
   if (envConfig.mockEnabled) {
     return Promise.resolve({
-      data: mockResources
+      data: mockCollections
     });
   } else {
     return axiosService.get(`${API_URL.URL_LATEST}`);
@@ -43,7 +43,7 @@ export const getLatestVideos = () => {
 export const getClassicVideos = () => {
   if (envConfig.mockEnabled) {
     return Promise.resolve({
-      data: mockResources
+      data: mockCollections
     });
   } else {
     return axiosService.get(`${API_URL.URL_CLASSIC}`);

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { onMounted, reactive, watch, ref, onUnmounted, computed } from 'vue';
 import dashjs from 'dashjs';
-import { listVideoResources } from '@/apis/resource';
 import { useRoute, useRouter } from 'vue-router';
-import type { IVideo } from '@/common/types/video';
+import type { IVideoResource, ICollection, ISeason, IPlaybackSource } from '@/common/types/video';
+import { mockVideoResources, mockCollections, mockSeasons, mockPlaybackSources } from '@/mock/MockResource';
 
 const dashVideoRef = ref()
 const route = useRoute()
@@ -11,56 +11,151 @@ const router = useRouter()
 let player: dashjs.MediaPlayerClass | null = null;
 
 /**
- * 响应式视频表单
+ * 响应式数据
  */
 const form = reactive({
-  id: 0,
-  videos: [] as IVideo[]
+  currentResourceId: 0,
+  videoResources: [] as IVideoResource[],
+  collections: [] as ICollection[],
+  seasons: [] as ISeason[],
+  playbackSources: [] as IPlaybackSource[]
 })
 
-// 获取当前播放的视频
-const currentVideo = computed(() => {
-  if (form.videos.length > 0 && form.id >= 0 && form.id < form.videos.length) {
-    return form.videos[form.id];
-  }
-  return null;
+// 获取当前播放的视频资源
+const currentVideoResource = computed(() => {
+  console.log("currentResourceId:", form.currentResourceId); // 打印currentResourceId，用于调试
+  return form.videoResources.find(resource => resource.id === form.currentResourceId);
 });
 
+// 获取当前资源的播放源
+const currentPlaybackSource = computed(() => {
+  return form.playbackSources.find(source => source.videoId === form.currentResourceId);
+});
+
+// 获取当前剧集所属的季
+const currentSeason = computed(() => {
+  const currentResource = currentVideoResource.value;
+  if (!currentResource || currentResource.type !== 'episode') return null;
+  
+  // 通过 collectionId 找到对应的季
+  return form.seasons.find(season => season.collectionId === currentResource.collectionId);
+});
+
+// 获取相关推荐合集
+const relatedCollections = computed(() => {
+  const currentResource = currentVideoResource.value;
+  if (!currentResource) return [];
+  
+  const currentCollection = form.collections.find(c => c.id === currentResource.collectionId);
+  if (!currentCollection || !currentCollection.relatedCollections) return [];
+  
+  return form.collections.filter(c => 
+    currentCollection.relatedCollections!.includes(c.id)
+  );
+});
+
+// 格式化时长（秒转换为时分秒）
+const formatDuration = (seconds: number): string => {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+  
+  if (hours > 0) {
+    return `${hours}:${minutes < 10 ? '0' + minutes : minutes}:${remainingSeconds < 10 ? '0' + remainingSeconds : remainingSeconds}`;
+  } else {
+    return `${minutes}:${remainingSeconds < 10 ? '0' + remainingSeconds : remainingSeconds}`;
+  }
+};
+
 // 获取视频类型的中文描述
-const getVideoTypeText = (type: 'movie' | 'tvshow' | 'video') => {
+const getVideoTypeText = (type: 'movie' | 'episode' | 'clip') => {
   switch (type) {
     case 'movie': return '电影';
-    case 'tvshow': return '电视剧';
-    case 'video': return '视频资源';
+    case 'episode': return '剧集';
+    case 'clip': return '片段';
     default: return '未知类型';
   }
 };
 
-// 根据ID获取相关电影信息
-const getRelatedMovieById = (id: number) => {
-  return form.videos.find(video => video.id === id);
+// 播放指定剧集
+const playEpisode = (episodeId: number) => {
+  const episode = form.videoResources.find(r => r.id === episodeId);
+  if (!episode) return;
+  
+  form.currentResourceId = episodeId;
 };
 
-// 播放相关电影
-const playRelatedMovie = (id: number) => {
-  const index = form.videos.findIndex(video => video.id === id);
-  if (index !== -1) {
-    form.id = index;
+// 播放指定视频
+const playVideo = (videoId: number) => {
+  const video = form.videoResources.find(r => r.id === videoId);
+  if (!video) return;
+  
+  form.currentResourceId = videoId;
+};
+
+// 播放指定合集（播放合集中的第一个项目）
+const playCollection = (collectionId: number) => {
+  const collection = form.collections.find(c => c.id === collectionId);
+  if (!collection || collection.items.length === 0) return;
+  
+  const firstItem = collection.items[0];
+  
+  if (firstItem.type === 'movie') {
+    // 播放电影
+    const movie = form.videoResources.find(r => r.id === firstItem.movieId);
+    if (movie) {
+      form.currentResourceId = movie.id;
+    }
+  } else if (firstItem.type === 'season') {
+    // 播放季的第一集
+    const season = form.seasons.find(s => s.id === firstItem.seasonId);
+    if (season && season.episodes.length > 0) {
+      const firstEpisode = season.episodes[0];
+      const episodeResource = form.videoResources.find(r => 
+        r.type === 'episode' && 
+        r.collectionId === season.collectionId && 
+        r.seasonNumber === season.seasonNumber && 
+        r.episodeNumber === firstEpisode.episodeNumber
+      );
+      if (episodeResource) {
+        form.currentResourceId = episodeResource.id;
+      }
+    }
   }
 };
 
-const updateVideo = async() => {
-  if (form.videos.length === 0 || !form.videos[form.id]) return;
+// 播放指定资源
+const playResource = (resourceId: number) => {
+  const resource = form.videoResources.find(r => r.id === resourceId);
+  const playbackSource = form.playbackSources.find(s => s.videoId === resourceId);
   
-  let currVideo: IVideo = form.videos[form.id];
+  if (!resource || !playbackSource) return;
+  
+  form.currentResourceId = resourceId;
+};
+
+const updateVideo = async() => {
+  const currentResource = currentVideoResource.value;
+  const currentSource = currentPlaybackSource.value;
+  
+  console.log("currentResource:", currentResource); // 打印currentResource，用于调试
+  console.log("currentSource:", currentSource); // 打印currentSource，用于调试
+
+  if (!currentResource || !currentSource) return;
+  
   // 如果已存在播放器实例，先销毁
   if (player) {
     player.reset();
   }
 
+  // 获取DASH源
+  const dashSource = currentSource.sources.find(s => s.type === 'dash');
+  console.log("dashSource:", dashSource); // 打印dashSource，用于调试
+  if (!dashSource) return;
+
   // 初始化DASH播放器
   player = dashjs.MediaPlayer().create();
-  player.initialize(dashVideoRef.value, currVideo.mpd, true);
+  player.initialize(dashVideoRef.value, dashSource.src, true);
   player.setAutoPlay(true);
   
   // 添加错误处理
@@ -68,46 +163,42 @@ const updateVideo = async() => {
     console.error('DASH播放器错误:', e);
   });
   
-  console.log("当前播放视频名称", currVideo.name);
-  console.log("当前播放视频资源", currVideo.mpd);
+  console.log("当前播放视频:", currentResource.title);
+  console.log("当前播放资源:", dashSource.src);
   
   // 更新URL，不刷新页面
   await router.replace({
-    query: {...route.query, id: form.id.toString()}
+    query: {...route.query, id: form.currentResourceId.toString()}
   });
 }
 
-watch(() => [form.id], () => {
-  console.log('[change id]', form.id);
+watch(() => [form.currentResourceId], () => {
+  console.log('[change resource id]', form.currentResourceId);
   updateVideo()
 })
 
-// 组件挂载时拉取视频资源
+// 组件挂载时拉取数据
 onMounted(() => {
   console.log("onMounted");
-  listVideoResources()
-      .then(response => {
-        form.videos = response.data;
-        
-        // 根据URL参数设置初始视频
-        console.log("当前URL参数", route.query); // 打印当前URL参数，包括name和id
-        console.log("当前视频列表", form.videos); // 打印当前URL参数，包括name和id
+  
+  // 加载模拟数据
+  form.videoResources = mockVideoResources;
+  form.collections = mockCollections;
+  form.seasons = mockSeasons;
+  form.playbackSources = mockPlaybackSources;
+  
+  // 根据URL参数设置初始视频
+  let resourceId = route.query.id as string;
 
-        let videoId = route.query.id as string;
-        if (videoId && !isNaN(Number(videoId))) {
-          let id = Number(videoId);
-          // 查找ID匹配的视频
-          const videoIndex = form.videos.findIndex(video => video.id === id);
-          if (videoIndex !== -1) {
-            form.id = videoIndex;
-          }
-        }
-        updateVideo();
-      })
-      .catch(error => console.log("拉取视频资源失败，请联系管理员"));
-})
+  if (resourceId && !isNaN(Number(resourceId))) {
+    form.currentResourceId = Number(resourceId);
+  } else if (form.videoResources.length > 0) {
+    form.currentResourceId = form.videoResources[0].id;
+  }
+  
+  updateVideo();
+});
 
-// 组件卸载时清理播放器资源
 onUnmounted(() => {
   if (player) {
     player.reset();
@@ -121,8 +212,8 @@ onUnmounted(() => {
     <!-- 视频播放区域 -->
     <div class="video-player-container">
       <!-- 视频标题显示在视频上方 -->
-      <h1 class="video-title-header" v-if="form.videos.length > 0 && form.videos[form.id]">
-        {{ form.videos[form.id].title }}
+      <h1 class="video-title-header" v-if="currentVideoResource">
+        {{ currentVideoResource.title }}
       </h1>
       
       <div class="video-player-wrapper">
@@ -130,83 +221,98 @@ onUnmounted(() => {
       </div>
       
       <!-- 视频信息区域 -->
-      <div class="video-info-container" v-if="form.videos.length > 0 && form.videos[form.id]">
+      <div class="video-info-container" v-if="currentVideoResource">
         <div class="video-stats">
           <span class="play-count">
             <i class="el-icon-video-play"></i> 
             播放量: 10.2万
           </span>
-          <span class="publish-date">发布时间: 2023-05-15</span>
-          <span class="video-type">类型: {{ getVideoTypeText(form.videos[form.id].type) }}</span>
+          <span class="publish-date">发布时间: {{ currentVideoResource.releaseDate }}</span>
+          <span class="video-type">类型: {{ getVideoTypeText(currentVideoResource.type) }}</span>
+          <span v-if="currentVideoResource.rating" class="video-rating">
+            评分: {{ currentVideoResource.rating }}
+          </span>
         </div>
         <div class="video-description">
-          {{ form.videos[form.id].description }}
+          {{ currentVideoResource.description }}
+        </div>
+        <div v-if="currentVideoResource.genres" class="video-genres">
+          <span class="genre-tag" v-for="genre in currentVideoResource.genres" :key="genre">
+            {{ genre }}
+          </span>
         </div>
       </div>
     </div>
     
     <!-- 根据视频类型显示不同的侧边栏内容 -->
     <div class="sidebar-content">
-      <!-- 电视剧：显示剧集信息 -->
-      <div v-if="currentVideo && currentVideo.type === 'tvshow' && currentVideo.episodes" class="episode-list">
-        <h2 class="section-title">剧集信息</h2>
-        <el-scrollbar height="calc(100vh - 100px)" class="episode-list-scrollbar">
+      <!-- 剧集：显示同季其他剧集 -->
+      <div v-if="currentVideoResource && currentVideoResource.type === 'episode' && currentSeason" class="episode-list">
+        <h2 class="section-title">{{ currentSeason.title || `第${currentSeason.seasonNumber}季` }}</h2>
+        <p v-if="currentSeason.description" class="season-description">{{ currentSeason.description }}</p>
+        <el-scrollbar height="calc(100vh - 150px)" class="episode-list-scrollbar">
           <div class="episode-item" 
-               v-for="episode in currentVideo.episodes" 
-               :key="`${episode.season}-${episode.episode}`">
-            <div class="episode-number">S{{ episode.season }}E{{ episode.episode }}</div>
+               v-for="episode in currentSeason.episodes" 
+               :key="episode.id"
+               :class="{ active: episode.id === currentVideoResource.id }"
+               @click="playEpisode(episode.id)">
+            <div class="episode-number">第{{ episode.episodeNumber }}集</div>
             <div class="episode-details">
               <h3 class="episode-title">{{ episode.title }}</h3>
-              <span class="episode-duration">{{ episode.duration }}</span>
+              <span class="episode-duration">{{ formatDuration(episode.duration) }}</span>
+              <p v-if="episode.plot" class="episode-plot">{{ episode.plot }}</p>
             </div>
           </div>
         </el-scrollbar>
       </div>
       
       <!-- 电影：显示相关推荐电影 -->
-      <div v-else-if="currentVideo && currentVideo.type === 'movie'" class="related-movies">
+      <div v-else-if="currentVideoResource && currentVideoResource.type === 'movie'" class="related-movies">
         <h2 class="section-title">相关推荐</h2>
         <el-scrollbar height="calc(100vh - 100px)" class="video-list-scrollbar">
           <div class="video-list">
             <div 
-              v-for="relatedId in currentVideo.relatedMovies"
-              :key="relatedId"
+              v-for="relatedCollection in relatedCollections"
+              :key="relatedCollection.id"
               class="recommended-video-item"
-              @click="playRelatedMovie(relatedId)"
+              @click="playCollection(relatedCollection.id)"
             >
               <div class="video-avatar-container">
-                <el-image :src="getRelatedMovieById(relatedId)?.avatar" fit="cover" class="video-avatar" />
+                <el-image :src="relatedCollection.coverImage" fit="cover" class="video-avatar" />
                 <div class="play-icon"><i class="el-icon-video-play"></i></div>
               </div>
               <div class="video-details">
-                <h3 class="video-item-title">{{ getRelatedMovieById(relatedId)?.title }}</h3>
-                <!-- 移除下面这行 -->
-                <!-- <p class="video-item-desc">{{ form.videos.find(video => video.id === relatedId)?.description }}</p> -->
+                <h3 class="video-item-title">{{ relatedCollection.title }}</h3>
+                <p class="video-item-desc">{{ relatedCollection.description }}</p>
               </div>
             </div>
           </div>
         </el-scrollbar>
       </div>
       
-      <!-- 视频资源：显示所有视频列表 -->
+      <!-- 默认：显示所有视频列表 -->
       <div v-else class="recommended-videos">
         <h2 class="section-title">所有视频</h2>
         <el-scrollbar height="calc(100vh - 100px)" class="video-list-scrollbar">
           <div class="video-list">
             <div 
-              v-for="(video, index) in form.videos" 
-              :key="index"
+              v-for="video in form.videoResources" 
+              :key="video.id"
               class="recommended-video-item"
-              :class="{ active: form.id === index }"
-              @click="form.id = index"
+              :class="{ active: form.currentResourceId === video.id }"
+              @click="playVideo(video.id)"
             >
               <div class="video-avatar-container">
-                <el-image :src="video.avatar" fit="cover" class="video-avatar" />
+                <el-image :src="video.coverImage" fit="cover" class="video-avatar" />
                 <div class="play-icon"><i class="el-icon-video-play"></i></div>
               </div>
               <div class="video-details">
                 <h3 class="video-item-title">{{ video.title }}</h3>
                 <p class="video-item-desc">{{ video.description }}</p>
+                <div class="video-meta">
+                  <span class="video-duration">{{ formatDuration(video.duration) }}</span>
+                  <span v-if="video.rating" class="video-rating">评分: {{ video.rating }}</span>
+                </div>
               </div>
             </div>
           </div>

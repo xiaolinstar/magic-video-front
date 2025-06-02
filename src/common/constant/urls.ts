@@ -6,6 +6,7 @@ export const API_URL = {
     // 使用nginx解决跨域问题
     URL_RESOURCE: `/core/resource`,
     URL_RESOURCE_ALL: `/core/resource/all`,
+    URL_COLLECTIONS: `/core/collection/list`,
     URL_RECOMMEND: `/core/resource/recommend`,
     URL_LATEST: `/core/resource/latest`,
     URL_BANNER: `/core/resource/banner`,  // 视频轮播图

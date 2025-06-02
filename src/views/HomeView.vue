@@ -6,19 +6,19 @@
     <!-- 视频推荐列表 -->
     <div class="video-section">
       <h2>推荐视频</h2>
-      <VideoList :videos="recommendedVideos" :maxRows="3" :showTypeTag="false" />
+      <VideoList :collections="recommendedCollections" :maxRows="3" :showTypeTag="false" />
     </div>
 
     <!-- 新剧展示 -->
     <div class="video-section">
       <h2>新剧上映</h2>
-      <VideoList :videos="latestVideos" :maxRows="2" :showTypeTag="true" />
+      <VideoList :collections="latestCollections" :maxRows="2" :showTypeTag="true" />
     </div>
 
     <!-- 经典好剧展示 -->
     <div class="video-section">
       <h2>经典好剧</h2>
-      <VideoList :videos="classicVideos" :maxRows="2" :showTypeTag="true"/>
+      <VideoList :collections="classicCollections" :maxRows="2" :showTypeTag="true"/>
     </div>
   </div>
 </template>
@@ -33,29 +33,29 @@ import {
 // 修正组件导入路径，使用绝对路径
 import Carousel from '@/views/Carousel.vue';
 import VideoList from '@/views/pages/VideoList.vue';
-import type { IVideo } from '@/common/types/video';
+import type { ICollection } from '@/common/types/video';
 
-const recommendedVideos = ref<IVideo[]>([]);
-const latestVideos = ref<IVideo[]>([]);
-const classicVideos = ref<IVideo[]>([]);
+const recommendedCollections = ref<ICollection[]>([]);
+const latestCollections = ref<ICollection[]>([]);
+const classicCollections = ref<ICollection[]>([]);
 
 // 获取视频资源并更新数据
 onMounted(() => {
   getRecommendVideos()
       .then(response => {
-        recommendedVideos.value = response.data;
+        recommendedCollections.value = response.data;
       })
       .catch(error => console.log("获取推荐视频失败"));
 
   getLatestVideos()
       .then(response => {
-        latestVideos.value = response.data;
+        latestCollections.value = response.data;
       })
       .catch(error => console.log("获取最新视频失败"));
 
   getClassicVideos()
       .then(response => {
-        classicVideos.value = response.data;
+        classicCollections.value = response.data;
       })
       .catch(error => console.log("获取经典视频失败"));
 });
