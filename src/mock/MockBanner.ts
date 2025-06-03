@@ -1,9 +1,4 @@
-export interface IBanner {
-  id: number;
-  title: string;
-  description: string;
-  avatar: string;
-}
+import type { IBanner } from "@/common/types/banner";
 
 export const mockBanners: IBanner[] = [
   { 

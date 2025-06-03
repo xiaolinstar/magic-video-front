@@ -31,8 +31,8 @@ import {
   getRecommendVideos,
 } from '@/apis/resource';
 // 修正组件导入路径，使用绝对路径
-import Carousel from '@/views/Carousel.vue';
-import VideoList from '@/views/pages/VideoList.vue';
+import Carousel  from '@/views/Carousel.vue';
+import VideoList  from '@/views/pages/VideoList.vue';
 import type { ICollection } from '@/common/types/video';
 
 const recommendedCollections = ref<ICollection[]>([]);

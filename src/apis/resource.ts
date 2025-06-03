@@ -64,4 +64,14 @@ export const getPopularVideos = () => {
   }
 };
 
+export const getResourceIdByCollection = () => {
+  if (envConfig.mockEnabled) {
+    return
+  }
+}
 
+export const getVideoResourceById = () => {
+  if (envConfig.mockEnabled) {
+    return
+  }
+}

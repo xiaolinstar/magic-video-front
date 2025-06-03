@@ -1,6 +1,6 @@
 <template>
   <div class="carousel-section">
-    <el-carousel :interval="3000" height="800px" indicator-position="" arrow="hover" :autoplay="true">
+    <el-carousel :interval="3000" height="800px" indicator-position="none" arrow="hover" :autoplay="true">
       <el-carousel-item v-for="banner in banners" :key="banner.id">
         <div class="carousel-item" @click="navigateToVideo(banner.id)">
           <div class="avatar-container">
@@ -21,27 +21,20 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { getBanners } from '@/apis/banner';
 import { onMounted } from 'vue';
-
+import type {IBanner} from "@/common/types/banner";
 
 const router = useRouter();
 
-interface IBanner {
-  id: number;
-  title: string;
-  description: string;
-  avatar: string;
-}
-
 const banners = ref<IBanner[]>([]);
 
-onMounted(async () => {
-  try {
-    const response = await getBanners();
-    console.log('获取轮播图数据成功:', response.data);
-    banners.value = response.data;
-  } catch (error) {
-    console.error('获取轮播图数据失败:', error);
-  }
+onMounted(() => {
+    getBanners().then(
+        (response) => {
+        console.log('获取轮播图数据成功:', response.data);
+        banners.value = response.data;
+      }
+    ).catch (error => console.error('获取轮播图数据失败:'))
+
 });
 
 const navigateToVideo = (videoId: number) => {
@@ -90,7 +83,7 @@ const navigateToVideo = (videoId: number) => {
   overflow: hidden;
   cursor: pointer;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  background-color: #000; /* 添加黑色背景 */
+  background-color: #0e0e0e; /* 添加黑色背景 */
 }
 
 .avatar-container {

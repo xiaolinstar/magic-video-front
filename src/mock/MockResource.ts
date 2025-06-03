@@ -1,4 +1,4 @@
-import type { ICollection, IVideoResource, ISeason, IEpisode, IPlaybackSource } from '@/common/types/video';
+import type { ICollection, IVideoResource, ISeason, IPlaybackSource } from '@/common/types/video';
 
 // 视频资源数据
 export const mockVideoResources: IVideoResource[] = [

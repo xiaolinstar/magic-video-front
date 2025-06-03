@@ -132,7 +132,8 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
-import { ElMessage, ElForm } from 'element-plus'
+import ElForm from 'element-plus'
+import ElMessage from 'element-plus'
 import {
   Location,
   Phone,

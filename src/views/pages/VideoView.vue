@@ -2,12 +2,17 @@
 import { onMounted, reactive, watch, ref, onUnmounted, computed } from 'vue';
 import dashjs from 'dashjs';
 import { useRoute, useRouter } from 'vue-router';
-import type { IVideoResource, ICollection, ISeason, IPlaybackSource, IEpisode } from '@/common/types/video';
+import type { IVideoResource, ICollection, ISeason, IPlaybackSource } from '@/common/types/video';
 import { mockVideoResources, mockCollections, mockSeasons, mockPlaybackSources } from '@/mock/MockResource';
+import { getVideoResourceById } from "@/apis/resource";
+import type {ComputedRef} from "@vue/reactivity";
 
 const dashVideoRef = ref()
 const route = useRoute()
 const router = useRouter()
+
+// TODO 显示推荐视频
+const showRecommendedVideos = ref(false)
 let player: dashjs.MediaPlayerClass | null = null;
 
 /**
@@ -24,17 +29,18 @@ const form = reactive({
 // 获取当前播放的视频资源
 const currentVideoResource = computed(() => {
   console.log("computed, currentResourceId:", form.currentResourceId); // 打印currentResourceId，用于调试
+  // await getVideoResourceById(form.currentResourceId)
   return form.videoResources.find(resource => resource.id === form.currentResourceId);
 });
 
-// 获取当前资源的播放源
+// TODO：（由后端完成？）获取当前资源的播放源
 const currentPlaybackSource = computed(() => {
   return form.playbackSources.find(source => source.videoId === form.currentResourceId);
 });
 
-// 获取当前剧集所属的季
+// TODO：（由后端完成？） 获取当前剧集所属的季
 const currentSeason = computed(() => {
-  const currentResource = currentVideoResource.value;
+  let currentResource = currentVideoResource.value;
   if (!currentResource || currentResource.type !== 'episode') return null;
 
   // 通过 collectionId 找到对应的季
@@ -68,7 +74,7 @@ const formatDuration = (seconds: number): string => {
 };
 
 // 获取视频类型的中文描述
-const getVideoTypeText = (type: 'movie' | 'episode' | 'clip') => {
+const getVideoTypeText = (type: 'movie' | 'episode' | 'clip'): string => {
   switch (type) {
     case 'movie': return '电影';
     case 'episode': return '剧集';
@@ -193,6 +199,7 @@ const updateVideo = async () => {
   });
 }
 
+// 当 currentResourceId 观察到发生变化，则更新播放内容
 watch(() => [form.currentResourceId], () => {
   console.log('[change resource id]', form.currentResourceId);
   updateVideo()
@@ -202,7 +209,7 @@ watch(() => [form.currentResourceId], () => {
 onMounted(() => {
   console.log("onMounted");
 
-  // 加载模拟数据
+  // TODO：加载模拟数据
   form.videoResources = mockVideoResources;
   form.collections = mockCollections;
   form.seasons = mockSeasons;
@@ -211,9 +218,11 @@ onMounted(() => {
   // 根据URL参数设置初始视频
   let resourceId = route.query.id as string;
 
+  // TODO 资源存在，则正常播放，否则跳转到未知页面
   if (resourceId && !isNaN(Number(resourceId))) {
     form.currentResourceId = Number(resourceId);
   } else if (form.videoResources.length > 0) {
+    // 默认第一个视频资源
     form.currentResourceId = form.videoResources[0].id;
   }
 
@@ -269,7 +278,7 @@ onUnmounted(() => {
     <!-- 剧集：显示同季其他剧集 -->
     <div v-if="currentVideoResource && currentVideoResource.type === 'episode' && currentSeason" class="episode-list">
       <h2 class="section-title">{{ currentSeason.title || `第${currentSeason.seasonNumber}季` }}</h2>
-      <p v-if="currentSeason.description" class="season-description">{{ currentSeason.description }}</p>
+      <p class="season-description">{{ currentSeason.description || "介绍待补充..."}}</p>
       <el-scrollbar height="calc(100vh - 150px)" class="episode-list-scrollbar">
         <div class="episode-grid">
           <div v-for="episode in currentSeason.episodes" :key="episode.id" 
@@ -305,7 +314,7 @@ onUnmounted(() => {
     </div>
 
     <!-- 默认：显示所有视频列表 -->
-    <div v-else class="recommended-videos">
+    <div v-else-if="showRecommendedVideos" class="recommended-videos">
       <h2 class="section-title">所有视频</h2>
       <el-scrollbar height="calc(100vh - 100px)" class="video-list-scrollbar">
         <div class="video-list">
@@ -527,6 +536,7 @@ onUnmounted(() => {
   color: #333;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   line-height: 1.4;
@@ -538,6 +548,7 @@ onUnmounted(() => {
   margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 1;
+  line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }

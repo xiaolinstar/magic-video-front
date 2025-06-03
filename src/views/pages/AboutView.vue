@@ -14,7 +14,7 @@
               <el-col :span="8" v-for="n in 3" :key="n">
                 <el-card shadow="hover">
                   <div class="avatar-placeholder"></div>
-                  <h3>成员 {{ n }}</h3>
+                  <h3>成员 xingxiaolin</h3>
                   <p>职位描述</p>
                 </el-card>
               </el-col>

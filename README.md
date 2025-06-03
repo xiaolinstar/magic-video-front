@@ -94,119 +94,88 @@ docker compose down
 
 ```mermaid
 classDiagram
-    %% 合集类 (ICollection)
-    class ICollection {
-        +id: number
-        +title: string
-        +type: 'movie-series' | 'tv-series' | 'anthology'
-        +description: string
-        +coverImage: string
-        +releaseYear: number?
-        +items: ICollectionItem[]
-        +relatedCollections: number[]?
-    }
-    
-    %% 合集项接口 (ICollectionItem)
-    <<interface>> ICollectionItem
-    ICollectionItem : +type: 'movie' | 'season'
-    ICollectionItem : +order: number
-    ICollectionItem : +title?: string
-    
-    %% 视频资源基类 (IVideoResource)
     class IVideoResource {
-        +id: number
-        +title: string
-        +originalTitle?: string
-        +description: string
-        +coverImage: string
-        +type: 'movie' | 'episode' | 'clip'
-        +releaseDate?: string
-        +duration: number
-        +genres?: string[]
-        +rating?: number
-        +cast?: string[]
-        +directors?: string[]
-        +tags?: string[]
-        +collectionId?: number
-        +seasonNumber?: number
-        +episodeNumber?: number
+        -number id
+        -string title
+        -string? originalTitle
+        -string description
+        -string coverImage
+        -('movie' | 'episode' | 'clip') type
+        -string? releaseDate
+        -number duration
+        -string[]? genres
+        -number? rating
+        -string[]? cast
+        -string[]? directors
+        -string[]? tags
+        -number? collectionId
+        -number? seasonNumber
+        -number? episodeNumber
     }
-    
-    %% 季类 (ISeason)
+
+    class ICollection {
+        -number id
+        -string title
+        -('movie-series' | 'tv-series' | 'anthology') type
+        -string description
+        -string coverImage
+        -number? releaseYear
+        -items: Array<IMovieItem | ISeasonItem>
+        -relatedCollections: number[]
+    }
+
+    class IMovieItem {
+        -'movie' type
+        -number movieId
+        -number order
+        -string? title
+    }
+
+    class ISeasonItem {
+        -'season' type
+        -number seasonId
+        -number order
+        -string? title
+    }
+
     class ISeason {
-        +id: number
-        +collectionId: number
-        +seasonNumber: number
-        +title?: string
-        +description?: string
-        +coverImage?: string
-        +releaseDate?: string
-        +episodes: IEpisode[]
+        -number id
+        -number collectionId
+        -number seasonNumber
+        -string? title
+        -string? description
+        -string? coverImage
+        -string? releaseDate
+        -episodes: IEpisode[]
     }
-    
-    %% 剧集类 (IEpisode)
+
     class IEpisode {
-        +id: number
-        +seasonId: number
-        +episodeNumber: number
-        +title: string
-        +duration: number
-        +thumbnail?: string
-        +plot?: string
+        -number id
+        -number seasonId
+        -number episodeNumber
+        -string title
+        -number duration
+        -string? thumbnail
+        -string? plot
     }
-    
-    %% 播放源类 (IPlaybackSource)
+
     class IPlaybackSource {
-        +videoId: number
-        +sources: IVideoSource[]
+        -number videoId
+        -IVideoSource[] sources
     }
-    
-    %% 视频源类 (IVideoSource)
+
     class IVideoSource {
-        +src: string
-        +type: 'mp4' | 'hls' | 'dash'
-        +resolution: string
-        +bitrate?: number
+        -string src
+        -('mp4' | 'hls' | 'dash') type
+        -string resolution
+        -number? bitrate
     }
-    
-    %% 具体实现类
-    class MovieItem {
-        +type: 'movie'
-        +movieId: number
-    }
-    
-    class SeasonItem {
-        +type: 'season'
-        +seasonId: number
-    }
-    
-    class Movie {
-        +awards?: string[]
-    }
-    
-    class Episode {
-        +plot?: string
-    }
-    
-    %% 关系定义
-    ICollection "1" --> "0..*" ICollectionItem : 包含
-    ICollectionItem <|.. MovieItem : 实现
-    ICollectionItem <|.. SeasonItem : 实现
-    
-    IVideoResource <|-- Movie : 继承
-    IVideoResource <|-- Episode : 继承
-    
-    ICollection "1" --> "0..*" IVideoResource : 包含 >
-    ISeason "1" --> "1" ICollection : 属于 >
-    ISeason "1" --> "0..*" IEpisode : 包含
-    IEpisode "1" --> "1" ISeason : 属于 >
-    IEpisode "1" --> "1" IPlaybackSource : 播放源
-    IPlaybackSource "1" --> "1..*" IVideoSource : 包含
-    
-    MovieItem "1" --> "1" Movie : 关联
-    SeasonItem "1" --> "1" ISeason : 关联
-    
-    IVideoResource "1" --> "0..*" IPlaybackSource : 播放源
+    IVideoResource "1" -- "0..*" IPlaybackSource : contains
+    IPlaybackSource "1" -- "1..*" IVideoSource : contains
+    ICollection "1" -- "1..*" IMovieItem : contains
+    ICollection "1" -- "1..*" ISeasonItem : contains
+    ISeasonItem "1" -- "1..*" ISeason : contains
+    ISeason "1" -- "1..*" IEpisode : contains
 ```
 
 ## 参考

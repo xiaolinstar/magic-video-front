@@ -8,7 +8,7 @@
         <input type="text" placeholder="搜索视频..." v-model="searchQuery" />
         <button @click="search">搜索</button>
       </div>
-      <ul class="nav-links">
+      <ul v-if="showHeaderNav" class="nav-links">
         <li><router-link to="/">首页</router-link></li>
         <li><router-link to="/video">视频</router-link></li>
         <li><router-link to="/about">关于我们</router-link></li>
@@ -19,8 +19,8 @@
           <i class="el-icon-upload2"></i> 投稿
         </button>
         <div class="auth-buttons">
-          <button @click="goToLogin">登录</button>
-          <button @click="goToRegister">注册</button>
+          <button v-if="showLoginButton" @click="goToLogin">登录</button>
+          <button v-if="showRegisterButton" @click="goToRegister">注册</button>
         </div>
       </div>
     </nav>
@@ -35,6 +35,9 @@ const router = useRouter();
 const searchQuery = ref('');
 // 设置为false暂时关闭投稿按钮
 const showUploadButton = ref(false);
+const showLoginButton = ref(false);
+const showRegisterButton = ref(false);
+const showHeaderNav = ref(false);
 
 const search = () => {
   if (searchQuery.value.trim()) {

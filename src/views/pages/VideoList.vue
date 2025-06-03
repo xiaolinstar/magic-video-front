@@ -55,19 +55,6 @@ const displayedCollections = computed(() => {
   return props.collections.slice(0, maxItems);
 });
 
-// 格式化时长（秒转换为时分秒）
-const formatDuration = (seconds: number): string => {
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  const remainingSeconds = seconds % 60;
-  
-  if (hours > 0) {
-    return `${hours}:${minutes < 10 ? '0' + minutes : minutes}:${remainingSeconds < 10 ? '0' + remainingSeconds : remainingSeconds}`;
-  } else {
-    return `${minutes}:${remainingSeconds < 10 ? '0' + remainingSeconds : remainingSeconds}`;
-  }
-};
-
 // 获取集合类型文本
 const getCollectionTypeText = (type: string): string => {
   switch (type) {
@@ -76,22 +63,14 @@ const getCollectionTypeText = (type: string): string => {
     case 'tv-series':
       return '剧集';
     default:
-      return '视频';
+      return '精选剪辑';
   }
 };
 
-// 获取视频类型的中文描述
-const getVideoTypeText = (type: 'movie' | 'episode' | 'clip') => {
-  switch (type) {
-    case 'movie': return '电影';
-    case 'episode': return '剧集';
-    case 'clip': return '片段';
-    default: return '';
-  }
-};
-
-// 点击集合，跳转到第一个视频（第一季第一集）
+// 点击集合，跳转到第一个视频
 const playCollection = (collection: ICollection) => {
+
+  // TODO：根据 CollectionId，从服务端获取直接相关联的视频资源
   if (collection.items && collection.items.length > 0) {
     const firstItem = collection.items[0];
     let resourceId: number;
@@ -112,9 +91,9 @@ const playCollection = (collection: ICollection) => {
       console.warn('未知的项目类型:', (firstItem as any).type);
       return;
     }
-    console.log('collection:', collection); // 打印collection，用于调试
-    console.log('resourceId:', resourceId); // 打印resourceId，用于调试
-    
+    console.log('resourceId:', resourceId); // 打印 resourceId，用于调试
+
+    // 跳转到： /video?id=xxxx123
     router.push({
       name: 'video',
       query: { id: resourceId }
@@ -138,6 +117,7 @@ const updateItemsPerRow = () => {
 
 // 初始化和窗口大小变化时更新
 updateItemsPerRow();
+
 window.addEventListener('resize', updateItemsPerRow);
 
 onUnmounted(() => {
@@ -258,6 +238,7 @@ onUnmounted(() => {
   color: #333;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -272,6 +253,7 @@ onUnmounted(() => {
   margin: 0 0 8px 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;

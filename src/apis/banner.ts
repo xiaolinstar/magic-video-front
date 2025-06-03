@@ -10,7 +10,6 @@ export const getBanners = () => {
         return Promise.resolve({
             data: mockBanners
         });
-        // returen axiosService.get('/banner');
     } else {
         // 生产环境下使用真实数据
         return axiosService.get(`${API_URL.URL_BANNER}`);

@@ -50,7 +50,7 @@ const route = useRoute();
   flex: 1;
   max-width: calc(100% - 200px);
   width: calc(100% - 200px);
-  padding: 0px 0px 0px 30px;
+  padding: 0 0 0 30px;
   box-sizing: border-box;
   margin: 0 auto;
   overflow-y: auto;
