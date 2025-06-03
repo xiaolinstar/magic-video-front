@@ -3,9 +3,7 @@ import { onMounted, reactive, watch, ref, onUnmounted, computed } from 'vue';
 import dashjs from 'dashjs';
 import { useRoute, useRouter } from 'vue-router';
 import type { IVideoResource, ICollection, ISeason, IPlaybackSource } from '@/common/types/video';
-import { mockVideoResources, mockCollections, mockSeasons, mockPlaybackSources } from '@/mock/MockResource';
-import { getVideoResourceById } from "@/apis/resource";
-import type {ComputedRef} from "@vue/reactivity";
+import {listCollections, listPlaybackSources, listResources, listSeasons} from "@/apis/resource";
 
 const dashVideoRef = ref()
 const route = useRoute()
@@ -33,12 +31,10 @@ const currentVideoResource = computed(() => {
   return form.videoResources.find(resource => resource.id === form.currentResourceId);
 });
 
-// TODO：（由后端完成？）获取当前资源的播放源
 const currentPlaybackSource = computed(() => {
   return form.playbackSources.find(source => source.videoId === form.currentResourceId);
 });
 
-// TODO：（由后端完成？） 获取当前剧集所属的季
 const currentSeason = computed(() => {
   let currentResource = currentVideoResource.value;
   if (!currentResource || currentResource.type !== 'episode') return null;
@@ -83,14 +79,6 @@ const getVideoTypeText = (type: 'movie' | 'episode' | 'clip'): string => {
   }
 };
 
-// 播放指定剧集
-const playEpisode = (episodeId: number) => {
-  const episode = form.videoResources.find(r => r.id === episodeId);
-  if (!episode) return;
-
-  form.currentResourceId = episodeId;
-};
-
 // 播放指定视频
 const playVideo = (videoId: number) => {
   const video = form.videoResources.find(r => r.id === videoId);
@@ -128,16 +116,6 @@ const playCollection = (collectionId: number) => {
       }
     }
   }
-};
-
-// 播放指定资源
-const playResource = (resourceId: number) => {
-  const resource = form.videoResources.find(r => r.id === resourceId);
-  const playbackSource = form.playbackSources.find(s => s.videoId === resourceId);
-
-  if (!resource || !playbackSource) return;
-
-  form.currentResourceId = resourceId;
 };
 
 // 根据剧集编号播放剧集
@@ -209,24 +187,30 @@ watch(() => [form.currentResourceId], () => {
 onMounted(() => {
   console.log("onMounted");
 
-  // TODO：加载模拟数据
-  form.videoResources = mockVideoResources;
-  form.collections = mockCollections;
-  form.seasons = mockSeasons;
-  form.playbackSources = mockPlaybackSources;
-
-  // 根据URL参数设置初始视频
-  let resourceId = route.query.id as string;
-
-  // TODO 资源存在，则正常播放，否则跳转到未知页面
-  if (resourceId && !isNaN(Number(resourceId))) {
-    form.currentResourceId = Number(resourceId);
-  } else if (form.videoResources.length > 0) {
-    // 默认第一个视频资源
-    form.currentResourceId = form.videoResources[0].id;
-  }
-
-  updateVideo();
+  Promise.all([
+    listResources()
+        .then(response => form.videoResources = response.data)
+        .catch(error => console.log(error)),
+    listCollections()
+        .then(response => form.collections = response.data)
+        .catch(error => console.log(error)),
+    listSeasons()
+        .then(response => form.seasons = response.data)
+        .catch(error => console.log(error)),
+    listPlaybackSources()
+        .then(response => form.playbackSources = response.data)
+        .catch(error => console.log(error))
+  ]).then(() => {
+    // 根据URL参数设置初始视频
+    let resourceId = route.query.id as string;
+    if (resourceId && !isNaN(Number(resourceId))) {
+      form.currentResourceId = Number(resourceId);
+    } else if (form.videoResources.length > 0) {
+      // 默认第一个视频资源
+      form.currentResourceId = 0
+    }
+    updateVideo();
+  })
 });
 
 onUnmounted(() => {
