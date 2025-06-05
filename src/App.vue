@@ -21,12 +21,14 @@ const route = useRoute();
 </template>
 
 <style>
+/* 应用根容器样式，使用 flex 布局，垂直排列子元素，最小高度为视口高度 */
 .app-container {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
+/* 内容包装器样式，使用 flex 布局，占据剩余空间，宽度为 100% */
 .content-wrapper {
   display: flex;
   flex: 1;
@@ -35,6 +37,7 @@ const route = useRoute();
   position: relative;
 }
 
+/* 侧边导航栏样式，使用粘性定位，固定在页面顶部，高度为视口高度 */
 .side-navigation {
   position: sticky;
   top: 0;

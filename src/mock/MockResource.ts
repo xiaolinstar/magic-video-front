@@ -66,7 +66,7 @@ export const mockVideoResources: IVideoResource[] = [
   {
     id: 300111,
     title: '寂静之海 第1集',
-    description: '2075年，地球陷入严重的水资源危机。月球研究基地发现了神秘的样本，韩国航天局决定派遣精英团队前往月球调查。',
+    description: '在未来，地球资源枯竭，人类面临生存危机。韩国政府决定重启“寂静之海”计划，派遣一支精英团队前往月球上废弃的赫密斯基地。团队成员包括队长韩太锡（郑雨盛饰）、生物学家宋智安（韩孝周饰）、工程师尹泰宇（李准饰）等。他们乘坐宇宙飞船抵达月球，发现基地已被废弃多年，但内部设施仍然完好。团队的主要任务是回收一种名为“露西”的神秘植物样本，这种植物被认为能在地球上种植并解决粮食危机。然而，基地内隐藏着许多未知的危险，团队成员们很快意识到他们的任务并不简单。',
     coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/SeaLuna.jpg',
     type: 'episode',
     duration: 3600, // 60分钟
@@ -77,7 +77,7 @@ export const mockVideoResources: IVideoResource[] = [
   {
     id: 300112,
     title: '寂静之海 第2集',
-    description: '团队抵达月球基地，发现基地内发生了不明原因的事故，所有研究人员都已死亡。',
+    description: '团队在赫密斯基地展开调查，发现基地内部异常安静，仿佛隐藏着某种秘密。在探索过程中，他们接收到一段神秘的信号，内容是一段模糊的录音，似乎来自多年前的基地人员。录音中提到“不要打开那个门”，这让团队成员感到困惑和不安。与此同时，基地的电力系统出现故障，导致部分区域停电，团队不得不依靠备用电源维持生存。在修复电力系统的过程中，宋智安发现“露西”植物的生长环境异常，似乎受到了某种未知因素的影响。团队成员之间的信任开始出现裂痕，每个人都在猜测基地中到底隐藏着什么。',
     coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/SeaLuna.jpg',
     type: 'episode',
     duration: 3480, // 58分钟
@@ -88,7 +88,7 @@ export const mockVideoResources: IVideoResource[] = [
   {
     id: 300113,
     title: '寂静之海 第3集',
-    description: '团队抵达月球基地，发现基地内发生了不明原因的事故，所有研究人员都已死亡。',
+    description: '团队继续深入基地，发现了一个被封锁的区域。在强行进入后，他们目睹了一些令人毛骨悚然的场景：多年前的基地人员尸体被发现，且尸体的状态异常，似乎经历了某种变异。队长韩太锡决定继续执行任务，但团队成员们已经意识到事情远比他们想象的复杂。在一次意外中，尹泰宇发现了一个隐藏的实验室，里面存放着大量关于“露西”植物的实验记录，以及一种名为“月球病毒”的研究资料。这种病毒似乎与基地人员的死亡和变异有关。团队成员们开始怀疑，他们所执行的任务背后可能隐藏着更大的阴谋。',
     coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/SeaLuna.jpg',
     type: 'episode',
     duration: 3480, // 58分钟
@@ -99,12 +99,56 @@ export const mockVideoResources: IVideoResource[] = [
   {
     id: 300114,
     title: '寂静之海 第4集',
-    description: '团队抵达月球基地，发现基地内发生了不明原因的事故，所有研究人员都已死亡。',
+    description: '随着调查的深入，团队成员们发现“月球病毒”已经泄露，基地内开始出现变异生物。这些生物具有极强的攻击性，团队成员们不得不与之展开生死搏斗。在混乱中，宋智安被病毒感染，她的身体开始出现变异迹象。韩太锡和其他成员试图控制局势，但病毒的传播速度远超他们的预期。基地内的氧气供应也开始出现问题，团队成员们面临着双重危机。在生死关头，韩太锡决定牺牲部分成员，以确保“露西”植物样本能够被带回地球。然而，宋智安的变异情况越来越严重，她的记忆开始模糊，甚至开始攻击其他成员。团队成员们陷入了绝望，他们不知道自己能否活着离开月球。',
     coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/SeaLuna.jpg',
     type: 'episode',
     duration: 3480, // 58分钟
     seasonNumber: 1,
     episodeNumber: 4,
+    collectionId: 3001
+  },
+  {
+    id: 300115,
+    title: '寂静之海 第5集',
+    description: '所有人都被带到数据库，E1带人发现了一个地图上没有的仓库，里面长满了绿色植物和树木。队员们在仓库中发现了大量月水胶囊。韩允才安排大家回收样本，但E1和金山等人在检查时遭遇了一个白衣服长发女子的攻击，E1的手腕被折断，样本胶囊被女子夺走。宋智安发现女子留下的样本胶囊，提醒大家赶快离开。众人分析，这个女子像是一个孩子，似乎在保护月水。韩允才与地球的崔局长联系后，得知必须杀死入侵者。宋智安建议去数据库查看数据，韩允才同意并安排她与洪医生一起行动。',
+    coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/SeaLuna.jpg',
+    type: 'episode',
+    duration: 3480, // 58分钟
+    seasonNumber: 1,
+    episodeNumber: 5,
+    collectionId: 3001
+  },
+  {
+    id: 300116,
+    title: '寂静之海 第6集',
+    description: 'E2、柳泰锡和样本都不见了。宋智安在入侵者身上看到一个熟悉的名字后，跟踪她到通风口一探究竟。与此同时，队员们发现E2被撞倒在地，晕了过去。众人分析入侵者是一个孩子，似乎在保护月水。韩允才准备和其他人去找这个孩子，宋智安则建议去数据库查看数据。韩允才要求宋智安和洪医生一起行动。在医务室，E2被抢救需要输血，众人发现有人是O型血，可以为B型血的E2输血。',
+    coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/SeaLuna.jpg',
+    type: 'episode',
+    duration: 3480, // 58分钟
+    seasonNumber: 1,
+    episodeNumber: 6,
+    collectionId: 3001
+  },
+  {
+    id: 300117,
+    title: '寂静之海 第7集',
+    description: '宋智安在行李箱里发现了一个硬盘，里面记录了姐姐宋远璟在基地的生活和工作，以及关于月水实验的视频。她看到姐姐在渤海基地对活人进行月水实验，最终只有露娜适应并活了下来。宋智安将月水注入露娜体内，露娜的伤势立刻恢复。与此同时，其他人发现了实验留下的遗存物。洪医生在基地中迷路，最终来到一个仓库，里面堆满了露娜的尸体。韩允才出现，两人回到控制室，发现金山已经死亡，柳泰锡则准备开启空气净化系统。',
+    coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/SeaLuna.jpg',
+    type: 'episode',
+    duration: 3410, // 58分钟
+    seasonNumber: 1,
+    episodeNumber: 7,
+    collectionId: 3001
+  },
+  {
+    id: 300118,
+    title: '寂静之海 第8集',
+    description: '基地的局势愈发危急，队员们与时间赛跑，试图完成任务并生存下去。韩允才和队员们在基地中寻找入侵者，发现她似乎一直在引诱他们。宋智安试图用月水安抚入侵者，最终发现入侵者其实是崔局长认识的小女孩，她一直在保护月水。队员们在基地中发现了更多关于月水实验的秘密，同时也意识到任务背后隐藏着更大的阴谋。最终，基地被摧毁，幸存的队员们面临着艰难的选择，决定这次任务以及他们自己的命运。',
+    coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/SeaLuna.jpg',
+    type: 'episode',
+    duration: 3410, // 58分钟
+    seasonNumber: 1,
+    episodeNumber: 8,
     collectionId: 3001
   },
   // 甜蜜家园剧集
@@ -240,7 +284,7 @@ export const mockCollections: ICollection[] = [
     id: 4001,
     title: '甜蜜家园',
     type: 'tv-series',
-    description: '韩国末日生存惊悚剧集，改编自同名网络漫画',
+    description: '《寂静之海》是一部韩国科幻电视剧，由崔永斌执导，郑雨盛、韩孝周、李准等主演。该剧于2021年12月24日在Netflix上线。该剧以未来世界为背景，讲述了人类为了在资源匮乏的地球上生存，前往月球废弃基地进行秘密任务的故事。',
     coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/sweet-home.jpg',
     releaseYear: 2020,
     items: [
@@ -340,6 +384,38 @@ export const mockSeasons: ISeason[] = [
         episodeNumber: 4,
         title: '第四集',
         duration: 3458, 
+        plot: '团队抵达月球基地，进行调查'
+      },
+      {
+        id: 300115,
+        seasonId: 30011,
+        episodeNumber: 5,
+        title: '第五集',
+        duration: 3458,
+        plot: '团队抵达月球基地，进行调查'
+      },
+      {
+        id: 300116,
+        seasonId: 30011,
+        episodeNumber: 6,
+        title: '第六集',
+        duration: 3458,
+        plot: '团队抵达月球基地，进行调查'
+      },
+      {
+        id: 300117,
+        seasonId: 30011,
+        episodeNumber: 7,
+        title: '第七集',
+        duration: 3458,
+        plot: '团队抵达月球基地，进行调查'
+      },
+      {
+        id: 300118,
+        seasonId: 30011,
+        episodeNumber: 8,
+        title: '第八集',
+        duration: 3458,
         plot: '团队抵达月球基地，进行调查'
       }
     ]
@@ -544,6 +620,50 @@ export const mockPlaybackSources: IPlaybackSource[] = [
     sources: [
       {
         src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/TheSilentSea/04/main.mpd',
+        type: 'dash',
+        resolution: '1080p',
+        bitrate: 4400
+      }
+    ]
+  },
+  {
+    videoId: 300115,
+    sources: [
+      {
+        src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/TheSilentSea/05/main.mpd',
+        type: 'dash',
+        resolution: '1080p',
+        bitrate: 4400
+      }
+    ]
+  },
+  {
+    videoId: 300116,
+    sources: [
+      {
+        src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/TheSilentSea/06/main.mpd',
+        type: 'dash',
+        resolution: '1080p',
+        bitrate: 4400
+      }
+    ]
+  },
+  {
+    videoId: 300117,
+    sources: [
+      {
+        src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/TheSilentSea/07/main.mpd',
+        type: 'dash',
+        resolution: '1080p',
+        bitrate: 4400
+      }
+    ]
+  },
+  {
+    videoId: 300118,
+    sources: [
+      {
+        src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/TheSilentSea/08/main.mpd',
         type: 'dash',
         resolution: '1080p',
         bitrate: 4400

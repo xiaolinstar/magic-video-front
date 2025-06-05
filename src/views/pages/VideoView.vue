@@ -270,7 +270,7 @@ onUnmounted(() => {
                :class="{ 'active': currentVideoResource.episodeNumber === episode.episodeNumber }"
                @click="playEpisodeByNumber(episode.episodeNumber)">
             <div class="episode-number">{{ episode.episodeNumber }}</div>
-            <div class="episode-title">{{ episode.title }}</div>
+<!--            <div class="episode-title">{{ episode.title }}</div>-->
             <div class="episode-duration">{{ formatDuration(episode.duration) }}</div>
           </div>
         </div>
@@ -324,12 +324,13 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+/* 视频页面样式，网格布局，视频占 70%，页面信息占据剩余的 30% */
 .video-page {
   max-width: 1600px;
   margin: 0 auto;
   padding: 24px;
   display: grid;
-  grid-template-columns: 65% 1fr;
+  grid-template-columns: 70% 1fr;
   /* 视频区域占据65%宽度 */
   gap: 24px;
   background-color: #f8f9fa;
@@ -540,9 +541,9 @@ onUnmounted(() => {
 /* 剧集网格样式 - 基础样式 */
 .episode-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 16px;
-  padding: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 10px;
+  padding: 2px;
 }
 
 .episode-card {
