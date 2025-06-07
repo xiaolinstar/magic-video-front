@@ -1,7 +1,13 @@
 import axiosService from '@/utils/request';
 import { API_URL } from '@/common/constant/urls';
 import envConfig from '@/config/env';
-import {mockCollections, mockPlaybackSources, mockSeasons, mockVideoResources} from '@/mock/MockResource';
+import {
+  mockCollections,
+  mockPlaybackSources,
+  mockSeasons,
+  mockVideoDetails,
+  mockVideoResources
+} from '@/mock/MockResource';
 import { mockPopularVideos } from '@/mock/MockPopular';
 
 
@@ -99,6 +105,18 @@ export const listPlaybackSources = () => {
   } else {
     return Promise.resolve({
       data: mockPlaybackSources
+    })
+  }
+}
+
+export const getVideoDetails = () => {
+  if (envConfig.mockEnabled) {
+    return Promise.resolve({
+      data: mockVideoDetails
+    })
+  } else {
+    return Promise.resolve({
+      data: mockVideoDetails
     })
   }
 }

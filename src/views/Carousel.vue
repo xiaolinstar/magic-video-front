@@ -1,6 +1,6 @@
 <template>
   <div class="carousel-section">
-    <el-carousel :interval="3000" height="800px" indicator-position="none" arrow="hover" :autoplay="true">
+    <el-carousel :interval="3000" height="60vh" indicator-position="none" arrow="hover" :autoplay="true">
       <el-carousel-item v-for="banner in banners" :key="banner.id">
         <div class="carousel-item" @click="navigateToVideo(banner.id)">
           <div class="avatar-container">
@@ -131,6 +131,33 @@ const navigateToVideo = (videoId: number) => {
 
 
 /* 响应式设计 */
+@media (max-width: 1200px) {
+  .banner-content h2 {
+    font-size: 36px;
+    margin-bottom: 15px;
+  }
+  
+  .banner-content p {
+    font-size: 20px;
+    margin-bottom: 25px;
+  }
+}
+
+@media (max-width: 992px) {
+  .banner-content {
+    padding: 40px;
+  }
+  
+  .banner-content h2 {
+    font-size: 32px;
+  }
+  
+  .banner-content p {
+    font-size: 18px;
+    max-width: 90%;
+  }
+}
+
 @media (max-width: 768px) {
   .carousel-section {
     padding: 0;
@@ -148,6 +175,67 @@ const navigateToVideo = (videoId: number) => {
   .banner-content p {
     font-size: 16px;
     margin-bottom: 15px;
+    max-width: 95%;
+  }
+  
+  :deep(.el-carousel__arrow) {
+    font-size: 16px;
+    width: 30px;
+    height: 30px;
+  }
+}
+
+@media (max-width: 576px) {
+  .banner-content {
+    padding: 20px;
+  }
+  
+  .banner-content h2 {
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+  
+  .banner-content p {
+    font-size: 14px;
+    margin-bottom: 10px;
+    max-width: 100%;
+  }
+  
+  :deep(.el-carousel__arrow) {
+    font-size: 14px;
+    width: 25px;
+    height: 25px;
+  }
+}
+
+@media (max-width: 480px) {
+  .banner-content {
+    padding: 15px;
+  }
+  
+  .banner-content h2 {
+    font-size: 20px;
+    margin-bottom: 5px;
+  }
+  
+  .banner-content p {
+    font-size: 12px;
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+}
+
+@media (max-width: 375px) {
+  .banner-content h2 {
+    font-size: 18px;
+  }
+  
+  .banner-content p {
+    font-size: 11px;
+  }
+  
+  :deep(.el-carousel__arrow) {
+    display: none;
   }
 }
 </style>

@@ -2,8 +2,8 @@
 import { onMounted, reactive, watch, ref, onUnmounted, computed } from 'vue';
 import dashjs from 'dashjs';
 import { useRoute, useRouter } from 'vue-router';
-import type { IVideoResource, ICollection, ISeason, IPlaybackSource } from '@/common/types/video';
-import {listCollections, listPlaybackSources, listResources, listSeasons} from "@/apis/resource";
+import type {IVideoResource, ICollection, ISeason, IPlaybackSource, IMovieItem} from '@/common/types/video';
+import {getVideoDetails, listCollections, listPlaybackSources, listResources, listSeasons} from "@/apis/resource";
 
 const dashVideoRef = ref()
 const route = useRoute()
@@ -20,6 +20,7 @@ const form = reactive({
   currentResourceId: 0,
   videoResources: [] as IVideoResource[],
   collections: [] as ICollection[],
+  movies: [] as IMovieItem[],
   seasons: [] as ISeason[],
   playbackSources: [] as IPlaybackSource[]
 })
@@ -40,7 +41,7 @@ const currentSeason = computed(() => {
   if (!currentResource || currentResource.type !== 'episode') return null;
 
   // 通过 collectionId 找到对应的季
-  return form.seasons.find(season => season.collectionId === currentResource.collectionId);
+  return form.seasons.find(season => season.collectionId === currentResource?.collectionId);
 });
 
 // 获取相关推荐合集
@@ -68,6 +69,18 @@ const formatDuration = (seconds: number): string => {
     return `${minutes}:${remainingSeconds < 10 ? '0' + remainingSeconds : remainingSeconds}`;
   }
 };
+
+// 判断是否需要滚动条
+const needsScroll = computed(() => {
+  if (currentVideoResource.value && currentVideoResource.value.type === 'episode' && currentSeason.value) {
+    return currentSeason.value.episodes && currentSeason.value.episodes.length > 5;
+  } else if (currentVideoResource.value && currentVideoResource.value.type === 'movie') {
+    return relatedCollections.value && relatedCollections.value.length > 5;
+  } else if (showRecommendedVideos.value) {
+    return form.videoResources && form.videoResources.length > 5;
+  }
+  return false;
+});
 
 // 获取视频类型的中文描述
 const getVideoTypeText = (type: 'movie' | 'episode' | 'clip'): string => {
@@ -124,13 +137,13 @@ const playEpisodeByNumber = (episodeNumber: number) => {
   if (!currentResource || !currentSeason.value) return;
 
   // 查找对应的剧集资源
-  const episodeResource = form.videoResources.find(r => 
-    r.type === 'episode' && 
-    r.collectionId === currentResource.collectionId && 
-    r.seasonNumber === currentSeason.value?.seasonNumber && 
+  const episodeResource = form.videoResources.find(r =>
+    r.type === 'episode' &&
+    r.collectionId === currentResource.collectionId &&
+    r.seasonNumber === currentSeason.value?.seasonNumber &&
     r.episodeNumber === episodeNumber
   );
-  
+
   console.log("episodeNumber:", episodeNumber); // 打印episodeResource，用于调试
   console.log("episodeResource:", episodeResource); // 打印episodeResource，用于调试
 
@@ -183,24 +196,27 @@ watch(() => [form.currentResourceId], () => {
   updateVideo()
 })
 
+// 添加控制描述展开/收起的状态变量
+const isDescriptionExpanded = ref(false);
+
+// 切换描述展开/收起状态的函数
+const toggleDescription = () => {
+  isDescriptionExpanded.value = !isDescriptionExpanded.value;
+};
+
 // 组件挂载时拉取数据
 onMounted(() => {
   console.log("onMounted");
 
-  Promise.all([
-    listResources()
-        .then(response => form.videoResources = response.data)
-        .catch(error => console.log(error)),
-    listCollections()
-        .then(response => form.collections = response.data)
-        .catch(error => console.log(error)),
-    listSeasons()
-        .then(response => form.seasons = response.data)
-        .catch(error => console.log(error)),
-    listPlaybackSources()
-        .then(response => form.playbackSources = response.data)
-        .catch(error => console.log(error))
-  ]).then(() => {
+  getVideoDetails().then(
+    response => {
+      form.videoResources = response.data.videoResources;
+      form.collections = response.data.collections;
+      form.movies = response.data.movies;
+      form.seasons = response.data.seasons;
+      form.playbackSources = response.data.playbackSources;
+    }
+  ).then(() => {
     // 根据URL参数设置初始视频
     let resourceId = route.query.id as string;
     if (resourceId && !isNaN(Number(resourceId))) {
@@ -238,16 +254,17 @@ onUnmounted(() => {
       <div class="video-info-container" v-if="currentVideoResource">
         <div class="video-stats">
           <span class="play-count">
-            <i class="el-icon-video-play"></i>
             播放量: 10.2万
           </span>
-          <span class="publish-date">发布时间: {{ currentVideoResource.releaseDate }}</span>
+          <span class="publish-date">
+            发布时间: {{ currentVideoResource.releaseDate || "2025-05-25" }}
+          </span>
           <span class="video-type">类型: {{ getVideoTypeText(currentVideoResource.type) }}</span>
           <span v-if="currentVideoResource.rating" class="video-rating">
             评分: {{ currentVideoResource.rating }}
           </span>
         </div>
-        <div class="video-description">
+        <div class="video-description" :class="{ 'expanded': isDescriptionExpanded }">
           {{ currentVideoResource.description }}
         </div>
         <div v-if="currentVideoResource.genres" class="video-genres">
@@ -262,15 +279,14 @@ onUnmounted(() => {
     <!-- 剧集：显示同季其他剧集 -->
     <div v-if="currentVideoResource && currentVideoResource.type === 'episode' && currentSeason" class="episode-list">
       <h2 class="section-title">{{ currentSeason.title || `第${currentSeason.seasonNumber}季` }}</h2>
-      <p class="season-description">{{ currentSeason.description || "介绍待补充..."}}</p>
+      <!-- <p class="season-description">{{ currentSeason.description || "介绍待补充..." }}</p> -->
       <el-scrollbar height="calc(100vh - 150px)" class="episode-list-scrollbar">
         <div class="episode-grid">
-          <div v-for="episode in currentSeason.episodes" :key="episode.id" 
-               class="episode-card" 
-               :class="{ 'active': currentVideoResource.episodeNumber === episode.episodeNumber }"
-               @click="playEpisodeByNumber(episode.episodeNumber)">
+          <div v-for="episode in currentSeason.episodes" :key="episode.id" class="episode-card"
+            :class="{ 'active': currentVideoResource.episodeNumber === episode.episodeNumber }"
+            @click="playEpisodeByNumber(episode.episodeNumber)">
             <div class="episode-number">{{ episode.episodeNumber }}</div>
-<!--            <div class="episode-title">{{ episode.title }}</div>-->
+            <!--            <div class="episode-title">{{ episode.title }}</div>-->
             <div class="episode-duration">{{ formatDuration(episode.duration) }}</div>
           </div>
         </div>
@@ -326,15 +342,58 @@ onUnmounted(() => {
 <style scoped>
 /* 视频页面样式，网格布局，视频占 70%，页面信息占据剩余的 30% */
 .video-page {
-  max-width: 1600px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 24px;
+  padding: 35px;
   display: grid;
-  grid-template-columns: 70% 1fr;
+  grid-template-columns: 70% 0.8fr;
   /* 视频区域占据65%宽度 */
   gap: 24px;
   background-color: #f8f9fa;
   min-height: calc(100vh - 48px);
+}
+
+@media (max-width: 1400px) {
+  .video-page {
+    padding: 12px;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .video-page {
+    grid-template-columns: 70% 1fr;
+    padding: 8px;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 992px) {
+  .video-page {
+    grid-template-columns: 1fr;
+    padding: 8px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .video-page {
+    grid-template-columns: 75% 1fr;
+    /* 中等屏幕上视频区域占据75%宽度 */
+  }
+}
+
+@media (max-width: 992px) {
+  .video-page {
+    grid-template-columns: 1fr;
+    /* 小屏幕上视频区域占据100%宽度，侧边栏移到下方 */
+  }
+
+  .recommended-videos,
+  .episode-list,
+  .related-movies {
+    grid-column: 1;
+    /* 侧边栏内容占据整行 */
+  }
 }
 
 .video-player-container {
@@ -353,11 +412,11 @@ onUnmounted(() => {
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 16px;
-  color: #fff;
+  color: #111010;
   text-align: left;
   width: 100%;
   padding: 16px 24px;
-  background-color: #2b2b2b;
+  background-color: #f8f2f2;
   border-radius: 8px 8px 0 0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
@@ -398,17 +457,13 @@ onUnmounted(() => {
   color: #555;
 }
 
-.play-count {
+.play-count,
+.publish-date {
   margin-right: 20px;
   display: flex;
   align-items: center;
 }
 
-.play-count i,
-.publish-date i {
-  margin-right: 6px;
-  color: #00a1d6;
-}
 
 .video-description {
   font-size: 15px;
@@ -541,14 +596,14 @@ onUnmounted(() => {
 /* 剧集网格样式 - 基础样式 */
 .episode-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   gap: 10px;
   padding: 2px;
 }
 
 .episode-card {
   background: #2a2a2a;
-  border-radius: 8px;
+  border-radius: 16px;
   padding: 16px;
   text-align: center;
   cursor: pointer;
@@ -679,21 +734,21 @@ onUnmounted(() => {
   .video-list {
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   }
-  
+
   .episode-grid {
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: 12px;
     padding: 12px;
   }
-  
+
   .episode-card {
-    padding: 12px;
+    padding: 6px;
   }
-  
+
   .episode-number {
     font-size: 20px;
   }
-  
+
   .episode-title {
     font-size: 11px;
   }
@@ -725,17 +780,17 @@ onUnmounted(() => {
     height: auto;
     min-height: 90px;
   }
-  
+
   .episode-grid {
     grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
     gap: 8px;
     padding: 8px;
   }
-  
+
   .episode-number {
     font-size: 18px;
   }
-  
+
   .episode-title {
     font-size: 10px;
   }

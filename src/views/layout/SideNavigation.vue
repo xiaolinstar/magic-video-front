@@ -79,6 +79,7 @@
   overflow-y: auto;
   /* 删除width: 100%设置，使用App.vue中定义的宽度 */
   box-sizing: border-box;
+  background-color: rgba(255, 255, 255, 0.8); /* 添加半透明背景 */
 }
 
 .nav-section {
@@ -105,9 +106,9 @@
 .nav-link {
   display: flex;
   align-items: center;
-  padding: 10px 16px;
+  padding: 8px 8px; /* 减小内边距使整体更紧凑 */
   color: #333;
-  border-radius: 4px;
+  border-radius: 2px;
   transition: all 0.3s;
 }
 

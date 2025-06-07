@@ -2,9 +2,11 @@
   <header>
     <nav class="navbar">
       <div class="logo">
-        <router-link to="/">魔法视频</router-link>
+        <router-link to="/">
+          <img src="/chai.svg" alt="魔法视频" class="logo-image" />
+        </router-link>
       </div>
-      <div class="search-container">
+      <div v-if="showSearchButton" class="search-container">
         <input type="text" placeholder="搜索视频..." v-model="searchQuery" />
         <button @click="search">搜索</button>
       </div>
@@ -24,6 +26,8 @@
         </div>
       </div>
     </nav>
+    <!-- 添加分割线 -->
+    <div class="header-divider"></div>
   </header>
 </template>
 
@@ -38,6 +42,7 @@ const showUploadButton = ref(false);
 const showLoginButton = ref(false);
 const showRegisterButton = ref(false);
 const showHeaderNav = ref(false);
+const showSearchButton = ref(false);
 
 const search = () => {
   if (searchQuery.value.trim()) {
@@ -69,14 +74,43 @@ const goToUpload = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #333;
-  color: #fff;
+  background-color: #f8f9fa;
+  color: #0c0c0c;
   padding: 10px 20px;
+  position: relative; /* 添加相对定位 */
+}
+
+/* 添加分割线和渐进阴影 */
+.header-divider {
+  height: 1px;
+  background: linear-gradient(to right, rgba(0,0,0,0.01), rgba(0,0,0,0.1), rgba(0,0,0,0.01));
+  width: 100%;
+  position: relative;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* 在分割线下方添加渐进阴影效果 */
+.header-divider::after {
+  content: '';
+  position: absolute;
+  top: 1px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.03), transparent);
 }
 
 .logo {
   font-size: 24px;
   font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+
+.logo-image {
+  height: 32px;
+  width: auto;
+  vertical-align: middle;
 }
 
 .search-container {

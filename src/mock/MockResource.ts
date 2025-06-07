@@ -1,4 +1,11 @@
-import type { ICollection, IVideoResource, ISeason, IPlaybackSource } from '@/common/types/video';
+import type {
+  ICollection,
+  IVideoResource,
+  ISeason,
+  IPlaybackSource,
+  IVideoDetails,
+  IMovieItem
+} from '@/common/types/video';
 
 // 视频资源数据
 export const mockVideoResources: IVideoResource[] = [
@@ -153,7 +160,7 @@ export const mockVideoResources: IVideoResource[] = [
   },
   // 甜蜜家园剧集
   {
-    id: 4001001,
+    id: 400111,
     title: '甜蜜家园 第1集',
     description: '车贤秀是一个自闭的高中生，在父母去世后搬到了一栋破旧的公寓楼。突然间，人类开始变异成怪物。',
     coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/sweet-home.jpg',
@@ -164,7 +171,7 @@ export const mockVideoResources: IVideoResource[] = [
     collectionId: 4001
   },
   {
-    id: 4001002,
+    id: 400112,
     title: '甜蜜家园 第2集',
     description: '公寓楼的居民们开始意识到外面的世界已经变得危险，他们必须团结起来生存。',
     coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/sweet-home.jpg',
@@ -300,7 +307,8 @@ export const mockCollections: ICollection[] = [
     releaseYear: 2019,
     items: [
       { type: 'season', seasonId: 50011, order: 1, title: '第一季' },
-      { type: 'season', seasonId: 50012, order: 2, title: '第二季' }
+      { type: 'season', seasonId: 50012, order: 2, title: '第二季' },
+      { type: 'movie', movieId: 50013, order: 3, title: '北方的阿信'}
     ]
   },
   {
@@ -315,6 +323,15 @@ export const mockCollections: ICollection[] = [
     ]
   }
 ];
+
+export const mockMovies: IMovieItem[] = [
+  {
+    type: 'movie',
+    movieId: 50013,        // 关联的电影ID
+    order: 3,         // 在系列中的顺序
+    title: "王国前传，北方的阿信"         // 可选的独立标题
+  }
+]
 
 // 季数据
 export const mockSeasons: ISeason[] = [
@@ -517,13 +534,24 @@ export const mockPlaybackSources: IPlaybackSource[] = [
     ]
   },
   {
-    videoId: 151234233,
+    videoId: 400111,
     sources: [
       {
-        src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/AnimalWorld/main.mpd',
+        src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/Md5-Otis-Ruby/Md5-Otis-Ruby.mpd',
         type: 'dash',
         resolution: '1080p',
         bitrate: 5000
+      }
+    ]
+  },
+  {
+    videoId: 400112,
+    sources: [
+      {
+        src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/Md5-Otis-Ruby/Md5-Otis-Ruby.mpd',
+        type: 'dash',
+        resolution: '1080p',
+        bitrate: 4600
       }
     ]
   },
@@ -564,18 +592,19 @@ export const mockPlaybackSources: IPlaybackSource[] = [
     videoId: 4001001,
     sources: [
       {
-        src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/sweet-home-ep1/sweet-home-ep1.mpd',
+        src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/Md5-Otis-Ruby/Md5-Otis-Ruby.mpd',
         type: 'dash',
         resolution: '1080p',
         bitrate: 4600
       }
     ]
   },
+  
   {
     videoId: 5001001,
     sources: [
       {
-        src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/kingdom-ep1/kingdom-ep1.mpd',
+        src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/Md5-Otis-Ruby/Md5-Otis-Ruby.mpd',
         type: 'dash',
         resolution: '1080p',
         bitrate: 4700
@@ -682,3 +711,12 @@ export const mockPlaybackSources: IPlaybackSource[] = [
     ]
   }
 ];
+
+
+export const mockVideoDetails: IVideoDetails = {
+  videoResources: mockVideoResources,
+  collections: mockCollections,
+  seasons: mockSeasons,
+  movies: mockMovies,
+  playbackSources: mockPlaybackSources
+}

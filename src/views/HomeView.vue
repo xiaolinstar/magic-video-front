@@ -10,13 +10,13 @@
     </div>
 
     <!-- 新剧展示 -->
-    <div class="video-section">
+    <div v-if="false" class="video-section">
       <h2>新剧上映</h2>
       <VideoList :collections="latestCollections" :maxRows="2" :showTypeTag="true" />
     </div>
 
     <!-- 经典好剧展示 -->
-    <div class="video-section">
+    <div v-if="false" class="video-section">
       <h2>经典好剧</h2>
       <VideoList :collections="classicCollections" :maxRows="2" :showTypeTag="true"/>
     </div>
@@ -71,7 +71,7 @@ onMounted(() => {
 }
 
 .video-section {
-  margin: 40px 0;
+  margin: 0px 160px;
   padding: 0 20px;
 }
 
@@ -112,5 +112,63 @@ onMounted(() => {
 
 :deep(.el-tabs__item.is-active) {
   color: #00a1d6;
+}
+
+/* 响应式布局 */
+@media (max-width: 1200px) {
+  .video-section {
+    margin: 0px 20px 0px 20px;
+    padding: 0 15px;
+  }
+}
+
+@media (max-width: 992px) {
+  .video-section {
+    margin: 0px 10px 0px 10px;
+    padding: 0 15px;
+  }
+  
+  .video-section h2 {
+    font-size: 22px;
+    margin-bottom: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .video-section {
+    margin: 0px 10px 0px 10px;
+    padding: 0 10px;
+  }
+  
+  .video-section h2 {
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+  
+  :deep(.el-tabs__item) {
+    font-size: 14px;
+    padding: 0 15px;
+  }
+}
+
+@media (max-width: 576px) {
+  .video-section {
+    margin: 0px 5px 0px 5px;
+    padding: 0 5px;
+  }
+  
+  .video-section h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  
+  .video-section h2::before {
+    height: 16px;
+  }
+  
+  :deep(.el-tabs__item) {
+    font-size: 13px;
+    padding: 0 10px;
+  }
 }
 </style>@/apis/resource

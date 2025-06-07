@@ -1,26 +1,3 @@
-
-
-// 视频基本信息
-interface IVideo {
-  id: number;   // 资源id
-  mp4: string;  // mp4资源地址
-  m3u8: string; // hls资源地址
-  mpd: string;  // dash资源地址
-  name: string; // 资源名称
-  title?: string; // 资源标题
-  description: string; // 资源描述
-  avatar: string; // 资源封面图
-  type: 'movie' | 'tvshow' | 'video'; // 视频类型：'movie'(电影)、'tvshow'(电视剧)、'video'(视频资源)
-
-  episodes?: { // TODO 待定
-    season: number; // 季数
-    episode: number; // 集数
-    title: string; // 集标题
-    duration: string; // 时长
-  }[];
-  relatedMovies?: number[]; // TODO 相关推荐电影ID数组
-}
-
 // 视频资源单元
 interface IVideoResource {
   id: number;              // 全局唯一视频id
@@ -109,11 +86,20 @@ interface IPlaybackSource {
   sources: IVideoSource[];
 }
 
+// 视频源
 interface IVideoSource {
   src: string;            // 资源地址
   type: 'mp4' | 'hls' | 'dash';
   resolution: string;     // 分辨率
   bitrate?: number;       // 码率 (kbps)
+}
+
+interface IVideoDetails {
+  videoResources: IVideoResource[];
+  collections: ICollection[];
+  movies: IMovieItem[];
+  seasons: ISeason[];
+  playbackSources: IPlaybackSource[];
 }
 
 export type {
@@ -124,5 +110,6 @@ export type {
   IVideoSource,
   ISeason,
   IMovieItem,
-  ISeasonItem
+  ISeasonItem,
+  IVideoDetails
 }

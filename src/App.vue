@@ -43,22 +43,33 @@ const route = useRoute();
   top: 0;
   height: 100vh;
   overflow-y: auto;
-  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0.8); /* 改为半透明背景 */
   z-index: 100;
-  width: 200px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 120px; /* 从200px减小到160px，更窄 */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* 减轻阴影效果 */
 }
 
 .main-content {
   flex: 1;
-  max-width: calc(100% - 200px);
-  width: calc(100% - 200px);
+  max-width: calc(100% - 160px); /* 相应调整 */
+  width: calc(100% - 160px); /* 相应调整 */
   padding: 0 0 0 30px;
   box-sizing: border-box;
   margin: 0 auto;
   overflow-y: auto;
 }
 
+@media (max-width: 768px) {
+  .side-navigation {
+    width: 45px; /* 从60px减小到45px */
+  }
+  
+  .main-content {
+    max-width: calc(100% - 45px); /* 相应调整 */
+    width: calc(100% - 45px); /* 相应调整 */
+    padding: 0 15px;
+  }
+}
 .main-content.no-padding {
   padding: 0;
   width: 100%;
@@ -86,12 +97,12 @@ a {
 
 @media (max-width: 768px) {
   .side-navigation {
-    width: 60px;
+    width: 50px; /* 从60px减小到50px */
   }
   
   .main-content {
-    max-width: calc(100% - 60px);
-    width: calc(100% - 60px);
+    max-width: calc(100% - 50px); /* 相应调整 */
+    width: calc(100% - 50px); /* 相应调整 */
     padding: 0 15px;
   }
 }
