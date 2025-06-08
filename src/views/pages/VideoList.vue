@@ -73,30 +73,31 @@ const playCollection = (collection: ICollection) => {
   // TODO：根据 CollectionId，从服务端获取直接相关联的视频资源
   if (collection.items && collection.items.length > 0) {
     const firstItem = collection.items[0];
-    let resourceId: number;
+    let videoId: number;
     
-    if (firstItem.type === 'movie') {
+    if (firstItem.type === 'movie' || firstItem.type === 'clip') {
       // 电影系列：直接跳转到第一部电影
-      resourceId = firstItem.movieId;
+      videoId = firstItem.id;
     } else if (firstItem.type === 'season') {
       // 剧集系列：跳转到第一季第一集
-      const seasonId = firstItem.seasonId;
+      const seasonId = firstItem.id;
       
       // 根据seasonId构造第一集的ID
       // 从mock数据可以看出，第一集的ID规律是：seasonId * 10 + 1
-      // 例如：seasonId 20011 -> 第一集ID 200111
-      //      seasonId 30011 -> 第一集ID 300111
-      resourceId = seasonId * 10 + 1;
+      // 例如：seasonId 20011 -> 第一集ID 200101
+      // 例如：seasonId 10051 -> 第一集ID 100501
+
+      videoId = Math.floor(seasonId / 10) * 100 + 1;
     } else {
       console.warn('未知的项目类型:', (firstItem as any).type);
       return;
     }
-    console.log('resourceId:', resourceId); // 打印 resourceId，用于调试
+    console.log('videoId:', videoId); // 打印 videoId，用于调试
 
     // 跳转到： /video?id=xxxx123
     router.push({
       name: 'video',
-      query: { id: resourceId }
+      query: { id: videoId }
     });
   }
 };

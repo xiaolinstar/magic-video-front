@@ -2,8 +2,8 @@
 import { onMounted, reactive, watch, ref, onUnmounted, computed } from 'vue';
 import dashjs from 'dashjs';
 import { useRoute, useRouter } from 'vue-router';
-import type {IVideoResource, ICollection, ISeason, IPlaybackSource, IMovieItem} from '@/common/types/video';
-import {getVideoDetails, listCollections, listPlaybackSources, listResources, listSeasons} from "@/apis/resource";
+import type { IVideo, ICollection, ISeason, IPlaybackSource } from '@/common/types/video';
+import { getVideoDetails } from "@/apis/resource";
 
 const dashVideoRef = ref()
 const route = useRoute()
@@ -18,9 +18,8 @@ let player: dashjs.MediaPlayerClass | null = null;
  */
 const form = reactive({
   currentResourceId: 0,
-  videoResources: [] as IVideoResource[],
+  videos: [] as IVideo[],
   collections: [] as ICollection[],
-  movies: [] as IMovieItem[],
   seasons: [] as ISeason[],
   playbackSources: [] as IPlaybackSource[]
 })
@@ -29,7 +28,7 @@ const form = reactive({
 const currentVideoResource = computed(() => {
   console.log("computed, currentResourceId:", form.currentResourceId); // 打印currentResourceId，用于调试
   // await getVideoResourceById(form.currentResourceId)
-  return form.videoResources.find(resource => resource.id === form.currentResourceId);
+  return form.videos.find(video => video.id === form.currentResourceId);
 });
 
 const currentPlaybackSource = computed(() => {
@@ -77,7 +76,7 @@ const needsScroll = computed(() => {
   } else if (currentVideoResource.value && currentVideoResource.value.type === 'movie') {
     return relatedCollections.value && relatedCollections.value.length > 5;
   } else if (showRecommendedVideos.value) {
-    return form.videoResources && form.videoResources.length > 5;
+    return form.videos && form.videos.length > 5;
   }
   return false;
 });
@@ -94,7 +93,7 @@ const getVideoTypeText = (type: 'movie' | 'episode' | 'clip'): string => {
 
 // 播放指定视频
 const playVideo = (videoId: number) => {
-  const video = form.videoResources.find(r => r.id === videoId);
+  const video = form.videos.find(r => r.id === videoId);
   if (!video) return;
 
   form.currentResourceId = videoId;
@@ -107,18 +106,18 @@ const playCollection = (collectionId: number) => {
 
   const firstItem = collection.items[0];
 
-  if (firstItem.type === 'movie') {
+  if (firstItem.type === 'movie' || firstItem.type === 'clip') {
     // 播放电影
-    const movie = form.videoResources.find(r => r.id === firstItem.movieId);
+    const movie = form.videos.find(r => r.id === firstItem.id);
     if (movie) {
       form.currentResourceId = movie.id;
     }
   } else if (firstItem.type === 'season') {
     // 播放季的第一集
-    const season = form.seasons.find(s => s.id === firstItem.seasonId);
+    const season = form.seasons.find(s => s.id === firstItem.id);
     if (season && season.episodes.length > 0) {
       const firstEpisode = season.episodes[0];
-      const episodeResource = form.videoResources.find(r =>
+      const episodeResource = form.videos.find(r =>
         r.type === 'episode' &&
         r.collectionId === season.collectionId &&
         r.seasonNumber === season.seasonNumber &&
@@ -137,7 +136,7 @@ const playEpisodeByNumber = (episodeNumber: number) => {
   if (!currentResource || !currentSeason.value) return;
 
   // 查找对应的剧集资源
-  const episodeResource = form.videoResources.find(r =>
+  const episodeResource = form.videos.find(r =>
     r.type === 'episode' &&
     r.collectionId === currentResource.collectionId &&
     r.seasonNumber === currentSeason.value?.seasonNumber &&
@@ -210,9 +209,8 @@ onMounted(() => {
 
   getVideoDetails().then(
     response => {
-      form.videoResources = response.data.videoResources;
+      form.videos = response.data.videos;
       form.collections = response.data.collections;
-      form.movies = response.data.movies;
       form.seasons = response.data.seasons;
       form.playbackSources = response.data.playbackSources;
     }
@@ -221,7 +219,7 @@ onMounted(() => {
     let resourceId = route.query.id as string;
     if (resourceId && !isNaN(Number(resourceId))) {
       form.currentResourceId = Number(resourceId);
-    } else if (form.videoResources.length > 0) {
+    } else if (form.videos.length > 0) {
       // 默认第一个视频资源
       form.currentResourceId = 0
     }

@@ -6,7 +6,7 @@ import {
   mockPlaybackSources,
   mockSeasons,
   mockVideoDetails,
-  mockVideoResources
+  mockVideos
 } from '@/mock/MockResource';
 import { mockPopularVideos } from '@/mock/MockPopular';
 
@@ -63,12 +63,12 @@ export const listResources = () => {
   if (envConfig.mockEnabled) {
     // 使用mock数据
     return Promise.resolve({
-      data: mockVideoResources
+      data: mockVideos
     });
   } else {
     // 使用mock数据
     return Promise.resolve({
-      data: mockVideoResources
+      data: mockVideos
     });
   }
 };

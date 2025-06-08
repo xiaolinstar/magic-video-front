@@ -1,5 +1,5 @@
 // 视频资源单元
-interface IVideoResource {
+interface IVideo {
   id: number;              // 全局唯一视频id
   title: string;           // 主标题
   originalTitle?: string;  // 原标题
@@ -26,33 +26,25 @@ interface IVideoResource {
 interface ICollection {
   id: number;             // 合集ID
   title: string;          // 合集标题
-  type: 'movie-series' | 'tv-series' | 'anthology'; // 合集类型
+  type?: 'movie-series' | 'tv-series' | 'anthology'; // 合集类型
   description: string;    // 合集描述
   coverImage: string;     // 合集封面
   releaseYear?: number;   // 发行年份
 
   directResourceId?: number; // 关联到可直接跳转的 resourceId
   // 合集内容
-  items: Array< IMovieItem | ISeasonItem >;
+  items: Array<IVideoItem>;
   
   // 相关推荐
   relatedCollections?: number[]; // 相关合集ID
 }
 
 // 电影系列中的电影项
-interface IMovieItem {
-  type: 'movie';
-  movieId: number;        // 关联的电影ID
-  order: number;          // 在系列中的顺序
-  title?: string;         // 可选的独立标题
-}
-
-// 剧集中的季项
-interface ISeasonItem {
-  type: 'season';
-  seasonId: number;       // 关联的季ID
-  order: number;          // 在剧集中的顺序
-  title?: string;         // 可选的季标题
+interface IVideoItem {
+  type: 'movie' | 'season' | 'clip';
+  id: number;
+  order: number;
+  title?: string;
 }
 
 // 季结构
@@ -95,9 +87,8 @@ interface IVideoSource {
 }
 
 interface IVideoDetails {
-  videoResources: IVideoResource[];
+  videos: IVideo[];
   collections: ICollection[];
-  movies: IMovieItem[];
   seasons: ISeason[];
   playbackSources: IPlaybackSource[];
 }
@@ -106,10 +97,9 @@ export type {
   ICollection, 
   IEpisode, 
   IPlaybackSource, 
-  IVideoResource, 
+  IVideo,
   IVideoSource,
   ISeason,
-  IMovieItem,
-  ISeasonItem,
+  IVideoItem,
   IVideoDetails
 }
