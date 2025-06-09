@@ -470,9 +470,9 @@ export const mockSeasons: ISeason[] = [
     id: 10081,
     collectionId: 1008,
     seasonNumber: 1,
-    title: '第一季',
+    title: '弥留之国的爱丽丝 第1季',
     description: '弥留之国的生存游戏',
-    coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/last-guys.jpg',
+    coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/alice-poke.jpg',
     releaseDate: '2020-12-10',
     episodes: [
       {
