@@ -178,5 +178,16 @@ classDiagram
     ISeason "1" -- "1..*" IEpisode : contains
 ```
 
+
+## Question
+
+### 前端 Mock 数据
+
+启动 mockjs 后，dashjs 无法播放视频？
+
+
+
+
+
 ## 参考
 

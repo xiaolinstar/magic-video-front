@@ -1,3 +1,29 @@
+
+// 合集结构 (统一管理电影系列和剧集)
+interface ICollection {
+id: number;             // 合集ID
+title: string;          // 合集标题
+type?: 'movie-series' | 'tv-series' | 'anthology'; // 合集类型
+description: string;    // 合集描述
+coverImage: string;     // 合集封面
+releaseYear?: number;   // 发行年份
+
+directResourceId?: number; // 关联到可直接跳转的 resourceId
+// 合集内容
+items: Array<IVideoItem>;
+
+// 相关推荐
+relatedCollections?: number[]; // 相关合集ID
+}
+
+// 视频项
+interface IVideoItem {
+type: 'movie' | 'season' | 'clip';
+id: number;
+sortOrder: number;
+title?: string;
+}
+
 // 视频资源单元
 interface IVideo {
   id: number;              // 全局唯一视频id
@@ -7,44 +33,21 @@ interface IVideo {
   coverImage: string;      // 封面图URL
   type: 'movie' | 'episode' | 'clip'; // 具体资源类型： 电影，剧集的一集，剪辑
   releaseDate?: string;    // 发布日期
-  duration: number;        // 时长(秒) TODO 分钟
-  
+  duration: number;        // 时长(秒)
+
   // 元数据
-  genres?: string[];       // 分类标签
   rating?: number;         // 评分
+  genres?: string[];       // 分类标签
   cast?: string[];         // 演员阵容
   directors?: string[];    // 导演
   tags?: string[];         // 标签
-  
+
   // 关系型字段
-  collectionId?: number;   // 所属合集ID
-  seasonNumber?: number;   // 季号 (剧集专属)
+  collectionId?: number;   // movie clip -> collectionId
+
+  seasonId?: number;       // episode -> seasonId
   episodeNumber?: number;  // 集号 (剧集专属)
-}
-
-// 合集结构 (统一管理电影系列和剧集)
-interface ICollection {
-  id: number;             // 合集ID
-  title: string;          // 合集标题
-  type?: 'movie-series' | 'tv-series' | 'anthology'; // 合集类型
-  description: string;    // 合集描述
-  coverImage: string;     // 合集封面
-  releaseYear?: number;   // 发行年份
-
-  directResourceId?: number; // 关联到可直接跳转的 resourceId
-  // 合集内容
-  items: Array<IVideoItem>;
-  
-  // 相关推荐
-  relatedCollections?: number[]; // 相关合集ID
-}
-
-// 电影系列中的电影项
-interface IVideoItem {
-  type: 'movie' | 'season' | 'clip';
-  id: number;
-  order: number;
-  title?: string;
+  seasonNumber?: number;   // 季号 (剧集专属)
 }
 
 // 季结构
@@ -87,9 +90,9 @@ interface IVideoSource {
 }
 
 interface IVideoDetails {
-  videos: IVideo[];
   collections: ICollection[];
   seasons: ISeason[];
+  videos: IVideo[];
   playbackSources: IPlaybackSource[];
 }
 

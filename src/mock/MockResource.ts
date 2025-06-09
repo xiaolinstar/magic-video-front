@@ -248,8 +248,8 @@ export const mockCollections: ICollection[] = [
     coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/crazy-max.jpg',
     releaseYear: 2015,
     items: [
-      { type: 'movie', id: 10011, order: 1, title: '狂暴之路' },
-      { type: 'movie', id: 10012, order: 2, title: '狂暴女神' }
+      { type: 'movie', id: 10011, sortOrder: 1, title: '狂暴之路' },
+      { type: 'movie', id: 10012, sortOrder: 2, title: '狂暴女神' }
     ],
     relatedCollections: [1002, 1003]
   },
@@ -261,7 +261,7 @@ export const mockCollections: ICollection[] = [
     coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/xuguanghan.jpg',
     releaseYear: 2019,
     items: [
-      { type: 'movie', id: 10021, order: 1, title: '阳光普照' }
+      { type: 'movie', id: 10021, sortOrder: 1, title: '阳光普照' }
     ]
   },
   {
@@ -272,7 +272,7 @@ export const mockCollections: ICollection[] = [
     coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/animalworld.jpg',
     releaseYear: 2018,
     items: [
-      { type: 'movie', id: 10031, order: 1, title: '动物世界' }
+      { type: 'movie', id: 10031, sortOrder: 1, title: '动物世界' }
     ]
   },
   {
@@ -283,7 +283,7 @@ export const mockCollections: ICollection[] = [
     coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/Otis%26Ruby.jpg',
     releaseYear: 2019,
     items: [
-      { type: 'clip', id: 10041, order: 1, title: 'Otis & Ruby 剧集最佳 CP 混剪' }
+      { type: 'clip', id: 10041, sortOrder: 1, title: 'Otis & Ruby 剧集最佳 CP 混剪' }
     ]
   },
   {
@@ -294,7 +294,7 @@ export const mockCollections: ICollection[] = [
     coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/SeaLuna.jpg',
     releaseYear: 2021,
     items: [
-      { type: 'season', id: 10051, order: 1, title: '寂静之海 第一季' }
+      { type: 'season', id: 10051, sortOrder: 1, title: '寂静之海 第一季' }
     ]
   },
   {
@@ -305,7 +305,7 @@ export const mockCollections: ICollection[] = [
     coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/sweet-home.jpg',
     releaseYear: 2020,
     items: [
-      { type: 'season', id: 10061, order: 1, title: '第一季' }
+      { type: 'season', id: 10061, sortOrder: 1, title: '第一季' }
     ]
   },
   {
@@ -316,9 +316,9 @@ export const mockCollections: ICollection[] = [
     coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/kindom.jpg',
     releaseYear: 2019,
     items: [
-      { type: 'season', id: 50011, order: 1, title: '第一季' },
-      { type: 'season', id: 50012, order: 2, title: '第二季' },
-      { type: 'movie', id: 500101, order: 3, title: '北方的阿信'}
+      { type: 'season', id: 50011, sortOrder: 1, title: '第一季' },
+      { type: 'season', id: 50012, sortOrder: 2, title: '第二季' },
+      { type: 'movie', id: 500101, sortOrder: 3, title: '北方的阿信'}
     ]
   },
   {
@@ -329,7 +329,7 @@ export const mockCollections: ICollection[] = [
     coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/alice-poke.jpg',
     releaseYear: 2020,
     items: [
-      { type: 'season', id: 10081, order: 1, title: '第一季' }
+      { type: 'season', id: 10081, sortOrder: 1, title: '第一季' }
     ]
   }
 ];
@@ -341,7 +341,7 @@ export const mockSeasons: ISeason[] = [
     id: 10051,
     collectionId: 1005,
     seasonNumber: 1,
-    title: '寂静之海 第一季',
+    title: '寂静之海 第1季',
     description: '月球基地的神秘事件调查',
     coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/silent-sea.jpg',
     releaseDate: '2021-12-24',
@@ -633,8 +633,8 @@ export const mockPlaybackSources: IPlaybackSource[] = [
 
 
 export const mockVideoDetails: IVideoDetails = {
-  videos: mockVideos,
   collections: mockCollections,
   seasons: mockSeasons,
+  videos: mockVideos,
   playbackSources: mockPlaybackSources
 }

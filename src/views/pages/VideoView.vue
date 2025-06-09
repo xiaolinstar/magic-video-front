@@ -11,6 +11,7 @@ const router = useRouter()
 
 // TODO 显示推荐视频
 const showRecommendedVideos = ref(false)
+
 let player: dashjs.MediaPlayerClass | null = null;
 
 /**
@@ -316,7 +317,7 @@ onUnmounted(() => {
       <h2 class="section-title">所有视频</h2>
       <el-scrollbar height="calc(100vh - 100px)" class="video-list-scrollbar">
         <div class="video-list">
-          <div v-for="video in form.videoResources" :key="video.id" class="recommended-video-item"
+          <div v-for="video in form.videos" :key="video.id" class="recommended-video-item"
             :class="{ active: form.currentResourceId === video.id }" @click="playVideo(video.id)">
             <div class="video-avatar-container">
               <el-image :src="video.coverImage" fit="cover" class="video-avatar" />
