@@ -1,14 +1,14 @@
 <template>
   <div class="carousel-section">
     <el-carousel :interval="3000" height="60vh" indicator-position="none" arrow="hover" :autoplay="true">
-      <el-carousel-item v-for="banner in banners" :key="banner.id">
-        <div class="carousel-item" @click="navigateToVideo(banner.id)">
+      <el-carousel-item v-for="slide in slides" :key="Number(slide.id)">
+        <div class="carousel-item" @click="navigateToVideo(slide.id)">
           <div class="avatar-container">
-            <el-image :src="banner.avatar" fit="contain" class="banner-avatar" />
+            <el-image :src="slide.coverImage" fit="contain" class="slide-avatar" />
           </div>
-          <div class="banner-content">
-            <h2>{{ banner.title }}</h2>
-            <p>{{ banner.description }}</p>
+          <div class="slide-content">
+            <h2>{{ slide.title }}</h2>
+            <p>{{ slide.description }}</p>
           </div>
         </div>
       </el-carousel-item>
@@ -19,29 +19,29 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { getBanners } from '@/apis/banner';
+import { getSlides } from '@/apis/slide';
 import { onMounted } from 'vue';
-import type {IBanner} from "@/common/types/banner";
+import type {ISlide} from "@/common/types/slide";
 
 const router = useRouter();
 
-const banners = ref<IBanner[]>([]);
+const slides = ref<ISlide[]>([]);
 
 onMounted(() => {
-    getBanners().then(
+    getSlides().then(
         (response) => {
         console.log('获取轮播图数据成功:', response.data);
-        banners.value = response.data;
+        slides.value = response.data;
       }
     ).catch (error => console.error('获取轮播图数据失败:'))
 
 });
 
-const navigateToVideo = (videoId: number) => {
+const navigateToVideo = (videoId: bigint) => {
   console.log('跳转到视频详情页:', videoId);
   router.push({
     path: '/video',
-    query: {id: videoId}
+    query: {id: videoId.toString()}
   });
 };
 </script>
@@ -95,7 +95,7 @@ const navigateToVideo = (videoId: number) => {
   justify-content: center;
 }
 
-.banner-avatar {
+.slide-avatar {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain; /* 保持图像比例 */
@@ -103,7 +103,7 @@ const navigateToVideo = (videoId: number) => {
   margin: 0 auto;
 }
 
-.banner-content {
+.slide-content {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -114,14 +114,14 @@ const navigateToVideo = (videoId: number) => {
   text-align: left;
 }
 
-.banner-content h2 {
+.slide-content h2 {
   font-size: 42px;
   margin-bottom: 20px;
   font-weight: 700;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-.banner-content p {
+.slide-content p {
   font-size: 22px;
   margin-bottom: 30px;
   max-width: 80%;
@@ -132,27 +132,27 @@ const navigateToVideo = (videoId: number) => {
 
 /* 响应式设计 */
 @media (max-width: 1200px) {
-  .banner-content h2 {
+  .slide-content h2 {
     font-size: 36px;
     margin-bottom: 15px;
   }
   
-  .banner-content p {
+  .slide-content p {
     font-size: 20px;
     margin-bottom: 25px;
   }
 }
 
 @media (max-width: 992px) {
-  .banner-content {
+  .slide-content {
     padding: 40px;
   }
   
-  .banner-content h2 {
+  .slide-content h2 {
     font-size: 32px;
   }
   
-  .banner-content p {
+  .slide-content p {
     font-size: 18px;
     max-width: 90%;
   }
@@ -163,16 +163,16 @@ const navigateToVideo = (videoId: number) => {
     padding: 0;
   }
   
-  .banner-content {
+  .slide-content {
     padding: 30px;
   }
   
-  .banner-content h2 {
+  .slide-content h2 {
     font-size: 28px;
     margin-bottom: 10px;
   }
   
-  .banner-content p {
+  .slide-content p {
     font-size: 16px;
     margin-bottom: 15px;
     max-width: 95%;
@@ -186,16 +186,16 @@ const navigateToVideo = (videoId: number) => {
 }
 
 @media (max-width: 576px) {
-  .banner-content {
+  .slide-content {
     padding: 20px;
   }
   
-  .banner-content h2 {
+  .slide-content h2 {
     font-size: 24px;
     margin-bottom: 8px;
   }
   
-  .banner-content p {
+  .slide-content p {
     font-size: 14px;
     margin-bottom: 10px;
     max-width: 100%;
@@ -209,16 +209,16 @@ const navigateToVideo = (videoId: number) => {
 }
 
 @media (max-width: 480px) {
-  .banner-content {
+  .slide-content {
     padding: 15px;
   }
   
-  .banner-content h2 {
+  .slide-content h2 {
     font-size: 20px;
     margin-bottom: 5px;
   }
   
-  .banner-content p {
+  .slide-content p {
     font-size: 12px;
     margin-bottom: 8px;
     line-height: 1.3;
@@ -226,11 +226,11 @@ const navigateToVideo = (videoId: number) => {
 }
 
 @media (max-width: 375px) {
-  .banner-content h2 {
+  .slide-content h2 {
     font-size: 18px;
   }
   
-  .banner-content p {
+  .slide-content p {
     font-size: 11px;
   }
   

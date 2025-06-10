@@ -1,31 +1,30 @@
 // 合集结构 (统一管理电影系列和剧集)
 interface ICollection {
-    id: number;             // 合集ID
+    id: bigint;             // 合集ID
     title: string;          // 合集标题
     type?: 'movie-series' | 'tv-series' | 'anthology'; // 合集类型
     description: string;    // 合集描述
     coverImage: string;     // 合集封面
     releaseYear?: number;   // 发行年份
 
-    directResourceId?: number; // 关联到可直接跳转的 resourceId
-// 合集内容
-    items: Array<IVideoItem>;
+    directVideoId?: bigint; // 关联到可直接跳转的 videoId
 
-// 相关推荐
-    relatedCollections?: number[]; // 相关合集ID
+    items: Array<IVideoItem>; // 合集内容
+
+    relatedCollections?: bigint[]; // 推荐合集ID
 }
 
 // 视频项
 interface IVideoItem {
     type: 'movie' | 'season' | 'clip';
-    id: number;
+    id: bigint;
     sortOrder: number;
     title?: string;
 }
 
 // 视频资源单元
 interface IVideo {
-    id: number;              // 全局唯一视频id
+    id: bigint;              // 全局唯一视频id
     title: string;           // 主标题
     originalTitle?: string;  // 原标题
     description: string;     // 描述
@@ -42,17 +41,17 @@ interface IVideo {
     tags?: string[];         // 标签
 
     // 关系型字段
-    collectionId?: number;   // movie clip -> collectionId
+    collectionId?: bigint;   // movie clip -> collectionId
 
-    seasonId?: number;       // episode -> seasonId
+    seasonId?: bigint;       // episode -> seasonId
     episodeNumber?: number;  // 集号 (剧集专属)
     seasonNumber?: number;   // 季号 (剧集专属)
 }
 
 // 季结构
 interface ISeason {
-    id: number;             // 季ID
-    collectionId: number;   // 所属合集ID
+    id: bigint;             // 季ID
+    collectionId: bigint;   // 所属合集ID
     seasonNumber: number;   // 季号
     title?: string;         // 季标题
     description?: string;   // 季描述
@@ -65,8 +64,8 @@ interface ISeason {
 
 // 剧集结构
 interface IEpisode {
-    id: number;             // 剧集ID
-    seasonId: number;       // 所属季ID
+    id: bigint;             // 剧集ID
+    seasonId: bigint;       // 所属季ID
     episodeNumber: number;  // 集号
     title: string;          // 集标题
     duration: number;       // 时长(秒)
@@ -76,7 +75,7 @@ interface IEpisode {
 
 // 播放源结构
 interface IPlaybackSource {
-    videoId: number;        // 关联的视频ID
+    videoId: bigint;        // 关联的视频ID
     sources: IVideoSource[];
 }
 
@@ -88,7 +87,7 @@ interface IVideoSource {
     bitrate?: number;       // 码率 (kbps)
 }
 
-interface IVideoDetails {
+interface IVideoSet {
     collections: ICollection[];
     seasons: ISeason[];
     videos: IVideo[];
@@ -103,5 +102,5 @@ export type {
     IVideoSource,
     ISeason,
     IVideoItem,
-    IVideoDetails
+    IVideoSet
 }

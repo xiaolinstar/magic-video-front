@@ -5,10 +5,11 @@ import {
   mockCollections,
   mockPlaybackSources,
   mockSeasons,
-  mockVideoDetails,
+  mockVideoSet,
   mockVideos
 } from '@/mock/MockResource';
 import { mockPopularVideos } from '@/mock/MockPopular';
+import type {IVideo} from "@/common/types/video";
 
 
 // 获取推荐视频
@@ -109,15 +110,13 @@ export const listPlaybackSources = () => {
   }
 }
 
-export const getVideoDetails = () => {
+export const getVideoSet = () => {
   if (envConfig.mockEnabled) {
     return Promise.resolve({
-      data: mockVideoDetails
+      data: mockVideoSet
     })
   } else {
-    return Promise.resolve({
-      data: mockVideoDetails
-    })
+    return axiosService.get(`${API_URL.URL_VIDEO_SET}`);
   }
 }
 
@@ -127,8 +126,24 @@ export const getResourceIdByCollection = () => {
   }
 }
 
-export const getVideoResourceById = () => {
+export const getVideoById = (id: bigint) => {
   if (envConfig.mockEnabled) {
-    return
+    let video = mockVideos.find(video => video.id === id)
+    return Promise.resolve({
+      data: video
+    })
+  } else {
+    return axiosService.get(`${API_URL.URL_VIDEO_PREFIX}/${id}`);
+  }
+}
+
+
+export const getSeasonById = (id: bigint) => {
+  if (envConfig.mockEnabled) {
+    return Promise.resolve({
+      data: mockSeasons[0]
+    })
+  } else {
+    return axiosService.get(`${API_URL.URL_SEASON_PREFIX}/${id}`);
   }
 }

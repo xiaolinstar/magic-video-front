@@ -7,17 +7,21 @@ export const API_URL = {
     URL_RESOURCE: `/core/resource`,
     URL_RESOURCE_ALL: `/core/resource/all`,
     URL_COLLECTIONS: `/core/collection/list`,
-    URL_RECOMMEND: `/core/resource/recommend`,
     URL_LATEST: `/core/resource/latest`,
-    URL_BANNER: `/core/resource/banner`,  // 视频轮播图
     URL_CLASSIC: `/core/resource/classic`,
     URL_POPULAR: `/core/resource/popular`,  // 热门视频
     URL_CATEGORY: `/core/category/all`,
-
     URL_USER: '/core/user/list',
+    URL_VIDEO_SET: '/core/collection/set',
+
+    URL_RECOMMEND: `/core/collection/list`,
+    URL_AUTH_LOGIN: `/auth/login`,
+    URL_SLIDE: `/core/video/slide`,  // 视频轮播图
+    URL_VIDEO_PREFIX: `/core/video`,
+
+    URL_SEASON_PREFIX: `/core/season`,
 
     // 鉴权接口
-    URL_AUTH_LOGIN: `/auth/login`,
     URL_AUTH_REGISTER: `/auth/register`,
     URL_AUTH_LOGOUT: `/auth/logout`,
     URL_AUTH_USER: `/auth/user`,

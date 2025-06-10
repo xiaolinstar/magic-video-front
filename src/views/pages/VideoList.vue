@@ -2,7 +2,7 @@
   <div class="video-list-container">
     <div 
       v-for="collection in displayedCollections" 
-      :key="collection.id" 
+      :key="collection.id.toString()"
       class="video-card"
       @click="playCollection(collection)"
     >
@@ -33,7 +33,8 @@
 <script setup lang="ts">
 import { ref, computed, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
-import type { ICollection } from '@/common/types/video';
+import type {ICollection, ISeason} from '@/common/types/video';
+import {getSeasonById, getVideoById} from "@/apis/resource";
 
 interface Props {
   collections: ICollection[];
@@ -56,7 +57,7 @@ const displayedCollections = computed(() => {
 });
 
 // 获取集合类型文本
-const getCollectionTypeText = (type: string): string => {
+const getCollectionTypeText = (type: string | undefined): string => {
   switch (type) {
     case 'movie-series':
       return '电影';
@@ -70,35 +71,42 @@ const getCollectionTypeText = (type: string): string => {
 // 点击集合，跳转到第一个视频
 const playCollection = (collection: ICollection) => {
 
-  // TODO：根据 CollectionId，从服务端获取直接相关联的视频资源
   if (collection.items && collection.items.length > 0) {
-    const firstItem = collection.items[0];
-    let videoId: number;
-    
-    if (firstItem.type === 'movie' || firstItem.type === 'clip') {
-      // 电影系列：直接跳转到第一部电影
-      videoId = firstItem.id;
-    } else if (firstItem.type === 'season') {
-      // 剧集系列：跳转到第一季第一集
-      const seasonId = firstItem.id;
-      
-      // 根据seasonId构造第一集的ID
-      // 从mock数据可以看出，第一集的ID规律是：seasonId * 10 + 1
-      // 例如：seasonId 20011 -> 第一集ID 200101
-      // 例如：seasonId 10051 -> 第一集ID 100501
+    let videoId: bigint
+    if(collection.directVideoId) {
+      videoId = collection.directVideoId
 
-      videoId = Math.floor(seasonId / 10) * 100 + 1;
+      // 跳转到： /video?id=xxxx123
+      router.push({
+        name: 'video',
+        query: {id: videoId.toString()}
+      });
     } else {
-      console.warn('未知的项目类型:', (firstItem as any).type);
-      return;
+      let firstItem = collection.items[0]
+      if (firstItem.type === 'season') {
+        // let response = await getSeasonById(firstItem.id)
+        // let season: ISeason = response.data
+        // videoId = season.episodes[0].id
+        getSeasonById(firstItem.id)
+            .then(response => {
+              let season: ISeason = response.data
+              videoId = season.episodes[0].id
+              // 跳转到： /video?id=xxxx123
+              router.push({
+                name: 'video',
+                query: {id: videoId.toString()}
+              });
+            })
+            .catch(error => console.log("Error fetching season:", error))
+      } else {
+        videoId = firstItem.id
+        // 跳转到： /video?id=xxxx123
+        router.push({
+          name: 'video',
+          query: {id: videoId.toString()}
+        });
+      }
     }
-    console.log('videoId:', videoId); // 打印 videoId，用于调试
-
-    // 跳转到： /video?id=xxxx123
-    router.push({
-      name: 'video',
-      query: { id: videoId }
-    });
   }
 };
 

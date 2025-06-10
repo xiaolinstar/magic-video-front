@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <!-- 轮播图（Banner） -->
+    <!-- 轮播图 -->
     <Carousel />
 
     <!-- 视频推荐列表 -->

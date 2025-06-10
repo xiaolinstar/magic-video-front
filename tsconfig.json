@@ -5,6 +5,7 @@
     "verbatimModuleSyntax": true,
     "allowSyntheticDefaultImports": true,
     "types": ["element-plus/global"],
+    "lib": ["es2020", "dom", "dom.iterable", "scripthost"],
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
