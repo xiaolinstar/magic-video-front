@@ -1,0 +1,51 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki-front:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: 'magic-nginx'
+    # 1. 定义抓取目标
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: nginx-access
+          __path__: /var/log/access.log
+      - targets:
+          - localhost
+        labels:
+          job: nginx-error
+          __path__: /var/log/error.log
+
+    pipeline_stages:
+      # 处理访问日志
+      - match:
+          selector: '{job="nginx-access"}'
+          stages:
+            - regex:
+                expression: '(?P<remote_addr>\S+) \S+ \S+ \[(?P<time_local>[^\]]+)\] "(?P<request>[^"]+)" (?P<status>\d+) (?P<body_bytes_sent>\d+) "(?P<http_referer>[^"]*)" "(?P<http_user_agent>[^"]*)"'
+            - timestamp:
+                source: time_local
+                format: "02/Jan/2006:15:04:05 -0700"
+            - labels:
+                remote_addr:
+                status:
+                http_user_agent:
+      # 处理错误日志
+      - match:
+          selector: '{job="nginx-error"}'
+          stages:
+            - regex:
+                expression: '\[(?P<time_local>[^\]]+)\] (?P<level>\w+): (?P<message>.+)'
+            - timestamp:
+                source: time_local
+                format: "YYYY/MM/DD HH:mm:ss"
+            - labels:
+                level:
+

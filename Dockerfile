@@ -22,7 +22,7 @@ COPY --from=build-stage /app/dist /usr/share/nginx/html
 
 EXPOSE 8080
 
-# 启动Nginx服务
+# 前台模式启动 Nginx 服务
 CMD ["nginx", "-g", "daemon off;"]
 
 
