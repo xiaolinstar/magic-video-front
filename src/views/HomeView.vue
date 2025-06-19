@@ -119,14 +119,14 @@ onMounted(() => {
 /* 响应式布局 */
 @media (max-width: 1200px) {
   .video-section {
-    margin: 0px 20px 0px 20px;
+    margin: 0 20px;
     padding: 0 15px;
   }
 }
 
 @media (max-width: 992px) {
   .video-section {
-    margin: 0px 10px 0px 10px;
+    margin: 0 10px;
     padding: 0 15px;
   }
 
@@ -155,7 +155,7 @@ onMounted(() => {
 
 @media (max-width: 576px) {
   .video-section {
-    margin: 0px 5px 0px 5px;
+    margin: 0 5px;
     padding: 0 5px;
   }
 

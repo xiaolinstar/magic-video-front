@@ -6,10 +6,16 @@
 * [X]  文档完善
 * [X]  使用 docker-compose 启动容器
 * [X]  页面弹性化，自适应屏幕变化
-* [ ]  在 Carousel 视频的 videoId 与 列表中的 videoId 不一致，无法准确跳转。
-* [ ]  删除 vue-tsc --noEmit && vite build --mode production 构建指令
-* [ ]  阿里云 腾讯云 本地媒体转码服务对比
-* [ ]  主键id在前端转化成 bigint
+* [X]  在 Carousel 视频的 videoId 与 列表中的 videoId 不一致，无法准确跳转。
+* [X]  删除 vue-tsc --noEmit && vite build --mode production 构建指令
+* [X]  阿里云 腾讯云 本地媒体转码服务对比，使用本地转码
+* [X]  主键 id 在前端转化成 bigint
+* [ ]  增加视频资源，支持 HLS 格式播放，播放器变更为 video.js
+* [ ]  支持视频左侧的菜单栏：PC 端和 手机端 完成设计
+* [ ]  轮播图视频资源，从 Collection 中 而不是 Video 获取
+* [ ]  PC 端和手机端增加 footer 美化
+
+
 
 ## 更新日志
 2025-03-29 模拟资源数据，前端界面展示不报错
