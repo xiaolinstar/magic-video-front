@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+
+data:
+  default.conf: |
+    server {
+        listen       80;
+        listen  [::]:80;
+        # 开启ssl，使用https
+        # ssl;
+        # 域名 部署服务器IP 本地环回地址
+        server_name  xingxiaolin.cn xiaolin.fun localhost;
+
+        access_log  /var/log/nginx/host.access.log  main;
+        error_log  /var/log/nginx/error.log  error;
+
+        location / {
+            # 将请求反向代理到 vitepress-website 容器的 8080 端口
+            proxy_pass http://magic-web-front:8080;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        #error_page  404              /404.html;
+        # redirect server error pages to the assets page /50x.html
+        #
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+    }
