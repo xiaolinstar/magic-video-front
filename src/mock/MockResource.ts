@@ -88,7 +88,7 @@ export const mockVideos: IVideo[] = [
     duration: 3600, // 60分钟
     seasonNumber: 1,
     episodeNumber: 1,
-    collectionId: 1005n
+    seasonId: 10051n
   },
   {
     id: 100502n,
@@ -99,7 +99,7 @@ export const mockVideos: IVideo[] = [
     duration: 3480, // 58分钟
     seasonNumber: 1,
     episodeNumber: 2,
-    collectionId: 1005n
+    seasonId: 10051n
   },
   {
     id: 100503n,
@@ -110,7 +110,7 @@ export const mockVideos: IVideo[] = [
     duration: 3480, // 58分钟
     seasonNumber: 1,
     episodeNumber: 3,
-    collectionId: 1005n
+    seasonId: 10051n
   },
   {
     id: 100504n,
@@ -121,7 +121,7 @@ export const mockVideos: IVideo[] = [
     duration: 3480, // 58分钟
     seasonNumber: 1,
     episodeNumber: 4,
-    collectionId: 1005n
+    seasonId: 10051n
   },
   {
     id: 100505n,
@@ -132,7 +132,7 @@ export const mockVideos: IVideo[] = [
     duration: 3480, // 58分钟
     seasonNumber: 1,
     episodeNumber: 5,
-    collectionId: 1005n
+    seasonId: 10051n
   },
   {
     id: 100506n,
@@ -143,7 +143,7 @@ export const mockVideos: IVideo[] = [
     duration: 3480, // 58分钟
     seasonNumber: 1,
     episodeNumber: 6,
-    collectionId: 1005n
+    seasonId: 10051n
   },
   {
     id: 100507n,
@@ -154,7 +154,7 @@ export const mockVideos: IVideo[] = [
     duration: 3410, // 58分钟
     seasonNumber: 1,
     episodeNumber: 7,
-    collectionId: 1005n
+    seasonId: 10051n
   },
   {
     id: 100508n,
@@ -165,7 +165,7 @@ export const mockVideos: IVideo[] = [
     duration: 3410, // 58分钟
     seasonNumber: 1,
     episodeNumber: 8,
-    collectionId: 1005n
+    seasonId: 10051n
   },
   // 甜蜜家园剧集
   {
@@ -223,7 +223,7 @@ export const mockVideos: IVideo[] = [
     duration: 3000, // 50分钟
     seasonNumber: 1,
     episodeNumber: 1,
-    collectionId: 1008n
+    seasonId: 10081n
   },
   {
     id: 100802n,
@@ -234,7 +234,73 @@ export const mockVideos: IVideo[] = [
     duration: 2940, // 49分钟
     seasonNumber: 1,
     episodeNumber: 2,
-    collectionId: 1008n
+    seasonId: 10081n
+  },
+  {
+    id: 100803n,
+    title: '弥留之国的爱丽丝 第3集',
+    description: '良平和朋友们发现自己被困在一个神秘的平行世界中，必须参加各种死亡游戏才能生存。',
+    coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/alice-poke.jpg',
+    type: 'episode',
+    duration: 2940, // 49分钟
+    seasonNumber: 1,
+    episodeNumber: 3,
+    seasonId: 10081n
+  },
+  {
+    id: 100804n,
+    title: '弥留之国的爱丽丝 第4集',
+    description: '良平和朋友们发现自己被困在一个神秘的平行世界中，必须参加各种死亡游戏才能生存。',
+    coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/alice-poke.jpg',
+    type: 'episode',
+    duration: 2940, // 49分钟
+    seasonNumber: 1,
+    episodeNumber: 4,
+    seasonId: 10081n
+  },
+  {
+    id: 100805n,
+    title: '弥留之国的爱丽丝 第5集',
+    description: '良平和朋友们发现自己被困在一个神秘的平行世界中，必须参加各种死亡游戏才能生存。',
+    coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/alice-poke.jpg',
+    type: 'episode',
+    duration: 2940, // 49分钟
+    seasonNumber: 1,
+    episodeNumber: 5,
+    seasonId: 10081n
+  },
+  {
+    id: 100806n,
+    title: '弥留之国的爱丽丝 第6集',
+    description: '良平和朋友们发现自己被困在一个神秘的平行世界中，必须参加各种死亡游戏才能生存。',
+    coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/alice-poke.jpg',
+    type: 'episode',
+    duration: 2940, // 49分钟
+    seasonNumber: 1,
+    episodeNumber: 6,
+    seasonId: 10081n
+  },
+  {
+    id: 100807n,
+    title: '弥留之国的爱丽丝 第7集',
+    description: '良平和朋友们发现自己被困在一个神秘的平行世界中，必须参加各种死亡游戏才能生存。',
+    coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/alice-poke.jpg',
+    type: 'episode',
+    duration: 2940, // 49分钟
+    seasonNumber: 1,
+    episodeNumber: 7,
+    seasonId: 10081n
+  },
+  {
+    id: 100808n,
+    title: '弥留之国的爱丽丝 第8集',
+    description: '良平和朋友们发现自己被困在一个神秘的平行世界中，必须参加各种死亡游戏才能生存。',
+    coverImage: 'https://vod-images-xiaolin.oss-cn-beijing.aliyuncs.com/alice-poke.jpg',
+    type: 'episode',
+    duration: 2940, // 49分钟
+    seasonNumber: 1,
+    episodeNumber: 8,
+    seasonId: 10081n
   }
 ];
 
@@ -479,7 +545,7 @@ export const mockSeasons: ISeason[] = [
         id: 100801n,
         seasonId: 10081n,
         episodeNumber: 1,
-        title: '第一集',
+        title: '第1集',
         duration: 3000, // 50分钟
         plot: '有栖良平和朋友们被困在神秘的平行世界中'
       },
@@ -487,7 +553,55 @@ export const mockSeasons: ISeason[] = [
         id: 100802n,
         seasonId: 10081n,
         episodeNumber: 2,
-        title: '第二集',
+        title: '第2集',
+        duration: 2940, // 49分钟
+        plot: '必须参加各种死亡游戏才能生存'
+      },
+      {
+        id: 100803n,
+        seasonId: 10081n,
+        episodeNumber: 3,
+        title: '第3集',
+        duration: 2940, // 49分钟
+        plot: '必须参加各种死亡游戏才能生存'
+      },
+      {
+        id: 100804n,
+        seasonId: 10081n,
+        episodeNumber: 4,
+        title: '第4集',
+        duration: 2940, // 49分钟
+        plot: '必须参加各种死亡游戏才能生存'
+      },
+      {
+        id: 100805n,
+        seasonId: 10081n,
+        episodeNumber: 5,
+        title: '第5集',
+        duration: 2940, // 49分钟
+        plot: '必须参加各种死亡游戏才能生存'
+      },
+      {
+        id: 100806n,
+        seasonId: 10081n,
+        episodeNumber: 6,
+        title: '第6集',
+        duration: 2940, // 49分钟
+        plot: '必须参加各种死亡游戏才能生存'
+      },
+      {
+        id: 100807n,
+        seasonId: 10081n,
+        episodeNumber: 7,
+        title: '第7集',
+        duration: 2940, // 49分钟
+        plot: '必须参加各种死亡游戏才能生存'
+      },
+      {
+        id: 100808n,
+        seasonId: 10081n,
+        episodeNumber: 8,
+        title: '第8集',
         duration: 2940, // 49分钟
         plot: '必须参加各种死亡游戏才能生存'
       }
@@ -501,10 +615,16 @@ export const mockPlaybackSources: IPlaybackSource[] = [
     videoId: 10011n,
     sources: [
       {
+        src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/crazy-max/hls/main.m3u8',
+        type: 'hls',
+        resolution: '1080p',
+        bitrate: 4400
+      },
+      {
         src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/Md5-Crazy-Max/Md5-Crazy-Max.mpd',
         type: 'dash',
         resolution: '1080p',
-        bitrate: 5000
+        bitrate: 4400
       }
     ]
   },
@@ -538,7 +658,13 @@ export const mockPlaybackSources: IPlaybackSource[] = [
         type: 'dash',
         resolution: '1080p',
         bitrate: 4400
-      }
+      },
+      {
+        src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/the-silent-sea/E01/hls/main.m3u8',
+        type: 'hls',
+        resolution: '1080p',
+        bitrate: 4400
+      },
     ]
   },
   {
@@ -549,7 +675,13 @@ export const mockPlaybackSources: IPlaybackSource[] = [
         type: 'dash',
         resolution: '1080p',
         bitrate: 4400
-      }
+      },
+      {
+        src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/the-silent-sea/E02/hls/main.m3u8',
+        type: 'hls',
+        resolution: '1080p',
+        bitrate: 4400
+      },
     ]
   },
   {
@@ -560,7 +692,13 @@ export const mockPlaybackSources: IPlaybackSource[] = [
         type: 'dash',
         resolution: '1080p',
         bitrate: 4400
-      }
+      },
+      {
+        src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/the-silent-sea/E03/hls/main.m3u8',
+        type: 'hls',
+        resolution: '1080p',
+        bitrate: 4400
+      },
     ]
   },
   {
@@ -571,7 +709,13 @@ export const mockPlaybackSources: IPlaybackSource[] = [
         type: 'dash',
         resolution: '1080p',
         bitrate: 4400
-      }
+      },
+      {
+        src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/the-silent-sea/E04/hls/main.m3u8',
+        type: 'hls',
+        resolution: '1080p',
+        bitrate: 4400
+      },
     ]
   },
   {
@@ -582,7 +726,13 @@ export const mockPlaybackSources: IPlaybackSource[] = [
         type: 'dash',
         resolution: '1080p',
         bitrate: 4400
-      }
+      },
+      {
+        src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/the-silent-sea/E05/hls/main.m3u8',
+        type: 'hls',
+        resolution: '1080p',
+        bitrate: 4400
+      },
     ]
   },
   {
@@ -593,7 +743,13 @@ export const mockPlaybackSources: IPlaybackSource[] = [
         type: 'dash',
         resolution: '1080p',
         bitrate: 4400
-      }
+      },
+      {
+        src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/the-silent-sea/E06/hls/main.m3u8',
+        type: 'hls',
+        resolution: '1080p',
+        bitrate: 4400
+      },
     ]
   },
   {
@@ -604,7 +760,13 @@ export const mockPlaybackSources: IPlaybackSource[] = [
         type: 'dash',
         resolution: '1080p',
         bitrate: 4400
-      }
+      },
+      {
+        src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/the-silent-sea/E07/hls/main.m3u8',
+        type: 'hls',
+        resolution: '1080p',
+        bitrate: 4400
+      },
     ]
   },
   {
@@ -615,18 +777,101 @@ export const mockPlaybackSources: IPlaybackSource[] = [
         type: 'dash',
         resolution: '1080p',
         bitrate: 4400
-      }
+      },
+      {
+        src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/the-silent-sea/E08/hls/main.m3u8',
+        type: 'hls',
+        resolution: '1080p',
+        bitrate: 4400
+      },
     ]
   },
   {
     videoId: 100801n,
     sources: [
       {
-        src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/Alice/01/main.mpd',
-        type: 'dash',
+        src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/alice-in-borderland/S01/E01/hls/main.m3u8',
+        type: 'hls',
         resolution: '1080p',
         bitrate: 4400
-      }
+      },
+    ]
+  },
+  {
+    videoId: 100802n,
+    sources: [
+      {
+        src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/alice-in-borderland/S01/E02/hls/main.m3u8',
+        type: 'hls',
+        resolution: '1080p',
+        bitrate: 4400
+      },
+    ]
+  },
+  {
+    videoId: 100803n,
+    sources: [
+      {
+        src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/alice-in-borderland/S01/E03/hls/main.m3u8',
+        type: 'hls',
+        resolution: '1080p',
+        bitrate: 4400
+      },
+    ]
+  },
+  {
+    videoId: 100804n,
+    sources: [
+      {
+        src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/alice-in-borderland/S01/E04/hls/main.m3u8',
+        type: 'hls',
+        resolution: '1080p',
+        bitrate: 4400
+      },
+    ]
+  },
+  {
+    videoId: 100805n,
+    sources: [
+      {
+        src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/alice-in-borderland/S01/E05/hls/main.m3u8',
+        type: 'hls',
+        resolution: '1080p',
+        bitrate: 4400
+      },
+    ]
+  },
+  {
+    videoId: 100806n,
+    sources: [
+      {
+        src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/alice-in-borderland/S01/E06/hls/main.m3u8',
+        type: 'hls',
+        resolution: '1080p',
+        bitrate: 4400
+      },
+    ]
+  },
+  {
+    videoId: 100807n,
+    sources: [
+      {
+        src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/alice-in-borderland/S01/E07/hls/main.m3u8',
+        type: 'hls',
+        resolution: '1080p',
+        bitrate: 4400
+      },
+    ]
+  },
+  {
+    videoId: 100808n,
+    sources: [
+      {
+        src: 'https://magic-video-bucket.oss-cn-nanjing.aliyuncs.com/alice-in-borderland/S01/E08/hls/main.m3u8',
+        type: 'hls',
+        resolution: '1080p',
+        bitrate: 4400
+      },
     ]
   }
 ];

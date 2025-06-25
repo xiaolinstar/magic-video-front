@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { onMounted, reactive, watch, ref, onUnmounted, computed } from 'vue';
-import dashjs from 'dashjs';
+import Player from 'xgplayer';
+import HlsPlugin from 'xgplayer-hls';
+import 'xgplayer/dist/index.min.css';
 import { useRoute, useRouter } from 'vue-router';
 import type {
   IVideo,
@@ -12,7 +14,7 @@ import type {
 } from '@/common/types/video';
 import { getVideoSet } from "@/apis/resource";
 
-const dashVideoRef = ref()
+const videoPlayerRef = ref()
 const route = useRoute()
 const router = useRouter()
 
@@ -27,7 +29,7 @@ const isAppleDevice = computed(() => {
 // 添加提示信息状态
 const showAppleDeviceWarning = ref(false);
 
-let player: dashjs.MediaPlayerClass | null = null;
+let player: any = null;
 
 /**
  * 响应式数据
@@ -67,6 +69,7 @@ const relatedCollections = computed(() => {
     currentCollection.relatedCollections!.includes(c.id)
   );
 });
+
 
 // 格式化时长（秒转换为时分秒）
 const formatDuration = (seconds: number): string => {
@@ -132,8 +135,8 @@ const playCollection = (collectionId: bigint) => {
       const firstEpisode = season.episodes[0];
       const episodeResource = form.videos.find(r =>
         r.type === 'episode' &&
-        r.collectionId === season.collectionId &&
-        r.seasonNumber === season.seasonNumber &&
+        r.collectionId === season?.collectionId &&
+        r.seasonNumber === season?.seasonNumber &&
         r.episodeNumber === firstEpisode.episodeNumber
       );
       if (episodeResource) {
@@ -172,36 +175,69 @@ const updateVideo = async () => {
   if (!currentResource || !currentSource) return;
 
   // 检查是否为Apple设备，如果是则显示提示信息
-  if (isAppleDevice.value) {
-    showAppleDeviceWarning.value = true;
-    // 可以选择在这里返回，不初始化播放器
-    // return;
-  } else {
-    showAppleDeviceWarning.value = false;
-  }
+  showAppleDeviceWarning.value = isAppleDevice.value;
 
   // 如果已存在播放器实例，先销毁
   if (player) {
-    player.reset();
+    player.destroy();
+    player = null;
   }
 
-  // 获取DASH源
-  const dashSource = currentSource.sources.find(s => s.type === 'dash');
-  console.log("dashSource:", dashSource); // 打印dashSource，用于调试
-  if (!dashSource) return;
+  // 优先查找HLS源，如果没有则使用DASH源
+  let videoSource = currentSource.sources.find(s => s.type === 'hls');
+  if (!videoSource) {
+    videoSource = currentSource.sources.find(s => s.type === 'dash');
+  }
+  
+  console.log("videoSource:", videoSource); // 打印videoSource，用于调试
+  if (!videoSource) return;
 
-  // 初始化DASH播放器
-  player = dashjs.MediaPlayer().create();
-  player.initialize(dashVideoRef.value, dashSource.src, true);
-  player.setAutoPlay(true);
+  // 根据视频源类型选择播放器配置
+  const playerConfig: any = {
+    el: videoPlayerRef.value,
+    url: videoSource.src,
+    autoplay: true,
+    width: '100%',
+    height: '100%',
+    fluid: true,
+    poster: currentResource.coverImage || '',
+    playsinline: true,
+    lang: 'zh-cn'
+  };
+
+  if (videoSource.type === 'hls') {
+    // 检查是否原生支持HLS
+    if (document.createElement('video').canPlayType('application/vnd.apple.mpegurl')) {
+      console.log("当前环境支持HLS播放");
+      // 原生支持HLS播放
+      player = new Player(playerConfig);
+    } else if (HlsPlugin.isSupported()) {
+      // 使用HLS插件
+      console.log("使用HLS插件");
+      playerConfig.plugins = [HlsPlugin];
+      playerConfig.hls = {
+        retryCount: 3,
+        retryDelay: 1000,
+        loadTimeout: 10000
+      };
+      player = new Player(playerConfig);
+    } else {
+      console.error('当前环境不支持HLS播放');
+      return;
+    }
+  } else {
+    // 使用普通播放器
+    player = new Player(playerConfig);
+  }
 
   // 添加错误处理
-  player.on(dashjs.MediaPlayer.events.ERROR, function (e: any) {
-    console.error('DASH播放器错误:', e);
+  player.on('error', function (e: any) {
+    console.error('播放器错误:', e);
   });
 
-  console.log("当前播放视频:", currentResource.title);
-  console.log("当前播放资源:", dashSource.src);
+  console.log("当前播放资源:", videoSource.src);
+  console.log("当前视频资源", currentVideo.value);
+  console.log("当前视频剧集", currentSeason.value)
 
   // 更新URL，不刷新页面
   await router.replace({
@@ -275,6 +311,7 @@ onMounted(() => {
   ).then(() => {
     // 根据URL参数设置初始视频
     let videoId = route.query.id as string;
+    console.log("videoId:", videoId);
     if (videoId && BigInt(videoId)) {
       form.currentVideoId = BigInt(videoId);
     } else if (form.videos.length > 0) {
@@ -287,7 +324,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   if (player) {
-    player.reset();
+    player.destroy();
     player = null;
   }
 });
@@ -315,8 +352,8 @@ onUnmounted(() => {
       </div>
 
       <div class="video-player-wrapper">
-        <video ref="dashVideoRef" controls class="video-player"></video>
-      </div>
+          <div ref="videoPlayerRef" class="video-player"></div>
+        </div>
 
       <!-- 视频信息区域 -->
       <div class="video-info-container" v-if="currentVideo">
@@ -419,49 +456,6 @@ onUnmounted(() => {
   gap: 24px;
   background-color: #f8f9fa;
   min-height: calc(100vh - 48px);
-}
-
-@media (max-width: 1400px) {
-  .video-page {
-    padding: 12px;
-    gap: 16px;
-  }
-}
-
-@media (max-width: 1200px) {
-  .video-page {
-    grid-template-columns: 70% 1fr;
-    padding: 8px;
-    gap: 12px;
-  }
-}
-
-@media (max-width: 992px) {
-  .video-page {
-    grid-template-columns: 1fr;
-    padding: 8px;
-  }
-}
-
-@media (max-width: 1200px) {
-  .video-page {
-    grid-template-columns: 75% 1fr;
-    /* 中等屏幕上视频区域占据75%宽度 */
-  }
-}
-
-@media (max-width: 992px) {
-  .video-page {
-    grid-template-columns: 1fr;
-    /* 小屏幕上视频区域占据100%宽度，侧边栏移到下方 */
-  }
-
-  .recommended-videos,
-  .episode-list,
-  .related-movies {
-    grid-column: 1;
-    /* 侧边栏内容占据整行 */
-  }
 }
 
 .video-player-container {

@@ -141,7 +141,7 @@ export const getVideoById = (id: bigint) => {
 export const getSeasonById = (id: bigint) => {
   if (envConfig.mockEnabled) {
     return Promise.resolve({
-      data: mockSeasons[0]
+      data: mockSeasons.find(season => season.id === id)
     })
   } else {
     return axiosService.get(`${API_URL.URL_SEASON_PREFIX}/${id}`);

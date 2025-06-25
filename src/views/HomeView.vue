@@ -44,6 +44,7 @@ onMounted(() => {
   getRecommendVideos()
       .then(response => {
         recommendedCollections.value = response.data;
+        console.log("推荐视频：",recommendedCollections.value);
       })
       .catch(error => console.log("获取推荐视频失败"));
   /*
