@@ -7,7 +7,7 @@ const router = createRouter({
       path: "/",
       name: "home",
       component: () => import("@/views/HomeView.vue"),
-      meta: { hideFooter: true,  hideSidebar: false }
+      meta: { hideFooter: true,  hideSidebar: true }
     },
     {
       path: "/popular",
@@ -19,7 +19,7 @@ const router = createRouter({
       path: "/video",
       name: "video",
       component: () => import("@/views/pages/VideoView.vue"),
-      meta: { hideFooter: true, hideSidebar: false}
+      meta: { hideFooter: true, hideSidebar: true}
     },
     {
       path: '/login',
