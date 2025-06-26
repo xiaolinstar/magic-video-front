@@ -26,9 +26,6 @@ const isAppleDevice = computed(() => {
   return /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
 });
 
-// 添加提示信息状态
-const showAppleDeviceWarning = ref(false);
-
 let player: any = null;
 
 /**
@@ -173,9 +170,6 @@ const updateVideo = async () => {
   console.log("currentSource:", currentSource); // 打印currentSource，用于调试
 
   if (!currentResource || !currentSource) return;
-
-  // 检查是否为Apple设备，如果是则显示提示信息
-  showAppleDeviceWarning.value = isAppleDevice.value;
 
   // 如果已存在播放器实例，先销毁
   if (player) {
@@ -338,18 +332,6 @@ onUnmounted(() => {
       <h1 class="video-title-header" v-if="currentVideo">
         {{ currentVideo.title }}
       </h1>
-
-      <!-- Apple设备提示信息 -->
-      <div v-if="showAppleDeviceWarning" class="apple-device-warning">
-        <el-alert
-          title="设备兼容性提示"
-          type="warning"
-          description="dash流暂不支持在Apple系列产品中播放，敬请期待！"
-          show-icon
-          :closable="false"
-        >
-        </el-alert>
-      </div>
 
       <div class="video-player-wrapper">
           <div ref="videoPlayerRef" class="video-player"></div>
@@ -858,9 +840,4 @@ onUnmounted(() => {
   }
 }
 
-/* Apple设备提示样式 */
-.apple-device-warning {
-  margin-bottom: 16px;
-  width: 100%;
-}
 </style>
