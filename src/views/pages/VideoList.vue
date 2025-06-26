@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onUnmounted } from 'vue';
+import { ref, computed, onUnmounted, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import type {ICollection, ISeason} from '@/common/types/video';
 import {getSeasonById, getVideoById} from "@/apis/resource";
@@ -49,11 +49,40 @@ const props = withDefaults(defineProps<Props>(), {
 
 const router = useRouter();
 const itemsPerRow = ref(5); // 根据屏幕大小估算每行显示的视频数量
+const maxRows = ref(props.maxRows); // 动态 maxRows
 
 // 计算显示的集合数量
 const displayedCollections = computed(() => {
-  const maxItems = props.maxRows * itemsPerRow.value;
+  const maxItems = maxRows.value * itemsPerRow.value;
   return props.collections.slice(0, maxItems);
+});
+
+// 监听窗口大小变化，调整每行显示的视频数量和 maxRows
+const updateItemsPerRow = () => {
+  const width = window.innerWidth;
+  if (width > 1200) {
+    itemsPerRow.value = 5;
+    maxRows.value = 5; // 大屏幕显示更多行
+  } else if (width > 768) {
+    itemsPerRow.value = 4;
+    maxRows.value = 4;
+  } else if (width > 480) {
+    itemsPerRow.value = 3;
+    maxRows.value = 4;
+  } else {
+    itemsPerRow.value = 2;
+    maxRows.value = 10; // 手机端显示更多行
+  }
+};
+
+// 初始化和窗口大小变化时更新
+onMounted(() => {
+  updateItemsPerRow();
+  window.addEventListener('resize', updateItemsPerRow);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', updateItemsPerRow);
 });
 
 // 获取集合类型文本
@@ -109,29 +138,6 @@ const playCollection = (collection: ICollection) => {
     }
   }
 };
-
-// 监听窗口大小变化，调整每行显示的视频数量
-const updateItemsPerRow = () => {
-  const width = window.innerWidth;
-  if (width > 1200) {
-    itemsPerRow.value = 5;
-  } else if (width > 768) {
-    itemsPerRow.value = 4;
-  } else if (width > 480) {
-    itemsPerRow.value = 3;
-  } else {
-    itemsPerRow.value = 2;
-  }
-};
-
-// 初始化和窗口大小变化时更新
-updateItemsPerRow();
-
-window.addEventListener('resize', updateItemsPerRow);
-
-onUnmounted(() => {
-  window.removeEventListener('resize', updateItemsPerRow);
-});
 </script>
 
 <style scoped>
