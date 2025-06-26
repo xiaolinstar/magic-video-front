@@ -21,80 +21,139 @@
 2025-02-19 创建 dev 分支，在开发环境启动项目 `npm run dev`
 2025-02-17 文档完善，开发环境和生产环境启动项目
 
-## 开始
+## 快速开始
 
-项目克隆
+### 项目克隆与依赖安装
 
 ```shell
+# 克隆项目
 git clone https://github.com/xiaolinstar/magic-video-front.git
-```
 
-进入项目
-
-```shell
+# 进入项目目录
 cd magic-video-front
-```
 
-安装依赖
-
-```sh
+# 安装依赖
 npm install
 ```
 
-### 开发环境
+## 项目启动方式
 
-> 无后端交互，前端 mock 数据
+本项目支持三种不同的启动方式，适用于不同的开发和部署场景：
 
-开发环境热启动，快速体验
+### 方式一：开发环境（Mock 数据模式）
 
+**适用场景：** 前端独立开发、快速原型验证、无需后端服务
+
+**特点：**
+- 使用 Mock.js 模拟后端数据
+- 支持热重载，开发体验友好
+- 无需启动后端服务，可独立运行
+- 适合前端功能开发和界面调试
+
+**启动命令：**
 ```sh
+# 方式1：使用 npm 脚本
+npm run dev
+
+# 方式2：直接使用 vite 命令
 vite --mode development
 ```
 
-### 开发直连环境
+**访问地址：** http://localhost:5173
 
-> 与后端地址直连，需先启动 magic-video-backend 后端服务，提供接口支持
+### 方式二：开发直连环境（后端联调模式）
 
-前后端本地联调模式
+**适用场景：** 前后端联调、接口测试、完整功能验证
 
+**特点：**
+- 直接连接后端 API 服务
+- 真实数据交互，完整业务流程
+- 需要先启动 magic-video-backend 后端服务
+- 适合集成测试和完整功能验证
+
+**前置条件：**
 ```sh
+# 需要先启动后端服务 magic-video-backend
+# 确保后端服务运行在配置的端口上
+```
+
+**启动命令：**
+```sh
+# 方式1：使用 npm 脚本
+npm run dev:direct
+
+# 方式2：直接使用 vite 命令
 vite --mode development.direct
 ```
 
-### 生产环境容器化部署
+**访问地址：** http://localhost:5173
 
-build 构建分发包 dist，然后使用 Nginx 静态资源代理
+### 方式三：生产环境（容器化部署）
 
-在项目目录下，构建
+**适用场景：** 生产部署、测试环境、完整服务栈部署
 
+**特点：**
+- 基于 Docker 容器化部署
+- 使用 Nginx 作为静态资源服务器
+- 包含完整的监控和日志系统（Grafana、Loki、Promtail）
+- 生产级别的性能和稳定性
+
+**部署步骤：**
+
+1. **构建生产版本**
 ```sh
 npm run build
 ```
 
-基于项目根目录下的 Dockerfile 构建镜像
-
+2. **构建 Docker 镜像**
 ```shell
+# 标准构建
 docker build -t xxl1997/magic-web-front:0.0.1-SNAPSHOT .
-```
 
-Windows 上的 Docker-Desktop 可能不支持上述命令，执行
-
-```shell
-# buildx 构建
+# Windows Docker Desktop 用户使用 buildx
 docker buildx build -t xxl1997/magic-web-front:0.0.1-SNAPSHOT .
 ```
 
-基于 docker-compose 启动项目，项目根目录下执行
-
+3. **启动完整服务栈**
 ```shell
+# 启动所有服务（包括 Nginx、Grafana、Loki 等）
 docker compose up -d
+
+# 查看服务状态
+docker compose ps
+
+# 查看服务日志
+docker compose logs -f
 ```
 
-项目卸载
-
+4. **停止服务**
 ```shell
+# 停止并移除所有容器
 docker compose down
+
+# 停止并移除所有容器及数据卷
+docker compose down -v
 ```
+
+**服务访问地址：**
+- 前端应用：http://localhost:80
+- Grafana 监控：http://localhost:3000
+
+**服务架构：**
+- `magic-front-nginx`: Nginx 反向代理和静态资源服务
+- `magic-web-front`: Vue.js 前端应用容器
+- `grafana-front`: Grafana 监控面板
+- `loki`: 日志聚合服务
+- `promtail`: 日志收集代理
+
+## 环境配置说明
+
+项目使用不同的环境配置文件：
+- `.env.development`: 开发环境配置（Mock 模式）
+- `.env.development.direct`: 开发直连环境配置
+- `.env.production`: 生产环境配置
+
+根据启动方式的不同，Vite 会自动加载对应的环境配置文件。
 
 ## 概要设计
 

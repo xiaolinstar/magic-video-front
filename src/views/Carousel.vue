@@ -21,7 +21,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { getSlides } from '@/apis/slide';
 import { onMounted } from 'vue';
-import type {ISlide} from "@/common/types/slide";
+import type { ISlide } from "@/common/types/slide";
 
 const router = useRouter();
 
